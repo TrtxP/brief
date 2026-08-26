@@ -100,7 +100,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
             <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>
               Номер (код) вашого брифу:
             </div>
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-cyan-light)' }}>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-accent)' }}>
               {result.reference_code}
             </div>
           </div>

@@ -194,12 +194,12 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-cyan-light)' }}>
+          <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-cyan)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Нові заявки</span>
               <span className="badge badge-new" style={{ fontSize: '10px' }}>NEW</span>
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
               {stats.by_status.new || 0}
             </div>
           </div>
@@ -209,7 +209,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>В обробці</span>
               <Clock size={18} style={{ color: 'var(--accent-amber)' }} />
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-amber)', fontFamily: 'var(--font-mono)' }}>
               {stats.by_status.in_review || 0}
             </div>
           </div>
@@ -219,7 +219,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Погоджено / Готово</span>
               <CheckCircle2 size={18} style={{ color: 'var(--accent-emerald)' }} />
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
               {(stats.by_status.approved || 0) + (stats.by_status.completed || 0)}
             </div>
           </div>

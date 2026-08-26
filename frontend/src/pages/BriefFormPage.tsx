@@ -302,17 +302,11 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
           })}
 
           {/* Submit Action Box */}
-          <div className="glass-panel" style={{
-            padding: '28px',
-            marginTop: '20px',
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(23, 37, 84, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%)',
-            border: '1px solid var(--border-active)'
-          }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
+          <div className="action-card" style={{ marginTop: '20px' }}>
+            <h3 className="action-card-title">
               Готові надіслати бриф?
             </h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+            <p className="action-card-desc">
               Перевірте вказані контакти. Після збереження ви отримаєте унікальний код брифу та можливість завантажити копію.
             </p>
 
