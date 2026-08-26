@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Auth;
+use App\Core\Validator;
 use App\Models\AdminUser;
 use App\Models\BriefSubmission;
 
@@ -179,9 +180,24 @@ class AdminController extends Controller
             $updateData['status'] = $input['status'];
         }
         if (isset($input['notes'])) {
+            $notesErr = Validator::validateTextarea($input['notes'], 'Нотатки менеджера', 2000);
+            if ($notesErr) {
+                $this->jsonResponse([
+                    'status' => 'error',
+                    'message' => $notesErr
+                ], 422);
+            }
             $updateData['notes'] = $input['notes'];
         }
         if (isset($input['answers']) && is_array($input['answers'])) {
+            $ansErrors = Validator::validateBriefAnswers($input['answers']);
+            if (!empty($ansErrors)) {
+                $this->jsonResponse([
+                    'status' => 'error',
+                    'message' => 'Помилки валідації відповідей: ' . implode('; ', $ansErrors),
+                    'errors' => $ansErrors
+                ], 422);
+            }
             $updateData['answers'] = $input['answers'];
         }
 

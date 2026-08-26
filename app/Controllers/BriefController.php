@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Validator;
 use App\Models\BriefSubmission;
 
 /**
@@ -23,7 +24,7 @@ class BriefController extends Controller
             $answers = [];
         }
 
-        // Basic validation for essential contact info (Questions 1 & 2)
+        // 1. Basic validation for essential contact info (Questions 1 & 2)
         $clientName = trim($input['client_name'] ?? $answers['1'] ?? '');
         $phone = trim($input['phone'] ?? $answers['2'] ?? '');
 
@@ -38,6 +39,33 @@ class BriefController extends Controller
             $this->jsonResponse([
                 'status' => 'error',
                 'message' => 'Будь ласка, вкажіть номер телефону для зв\'язку (Пункт 2).'
+            ], 422);
+        }
+
+        // 2. Validate client name and phone using regex
+        $nameError = Validator::validateTextInput($clientName, "Ім'я замовника (Пункт 1)", 150);
+        if ($nameError) {
+            $this->jsonResponse([
+                'status' => 'error',
+                'message' => $nameError
+            ], 422);
+        }
+
+        $phoneDigits = preg_replace('/[^0-9+]/', '', $phone);
+        if (strlen($phoneDigits) < 7 || strlen($phoneDigits) > 20) {
+            $this->jsonResponse([
+                'status' => 'error',
+                'message' => 'Вкажіть коректний номер телефону (від 7 до 20 цифр).'
+            ], 422);
+        }
+
+        // 3. Validate all brief answers (specifically checking textarea fields and custom inputs via regex patterns)
+        $validationErrors = Validator::validateBriefAnswers($answers);
+        if (!empty($validationErrors)) {
+            $this->jsonResponse([
+                'status' => 'error',
+                'message' => 'Виявлено помилки валідації полів брифу: ' . implode('; ', $validationErrors),
+                'errors' => $validationErrors
             ], 422);
         }
 
