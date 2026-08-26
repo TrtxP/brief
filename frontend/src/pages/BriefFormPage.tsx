@@ -108,7 +108,7 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     e.preventDefault();
     setSubmitError(null);
 
-    // Validate essential required fields (Q1 name, Q2 phone)
+    // Validate all required fields
     const newErrors: Record<string, string> = {};
     const clientName = typeof answers['1'] === 'string' ? answers['1'].trim() : '';
     const phone = typeof answers['2'] === 'string' ? answers['2'].trim() : '';
@@ -122,6 +122,25 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
       newErrors['2'] = 'Введіть коректний номер телефону.';
     }
 
+    // Validate all other required questions
+    BRIEF_QUESTIONS.forEach(q => {
+      if (!q.required || q.id === '1' || q.id === '2') return;
+      const val = answers[q.id];
+      if (q.type === 'checkbox') {
+        if (!Array.isArray(val) || val.length === 0) {
+          newErrors[q.id] = 'Оберіть хоча б один варіант.';
+        }
+      } else if (q.type === 'radio' || q.type === 'select') {
+        if (!val || (typeof val === 'string' && val.trim() === '')) {
+          newErrors[q.id] = 'Оберіть один із запропонованих варіантів.';
+        }
+      } else {
+        if (!val || (typeof val === 'string' && val.trim() === '')) {
+          newErrors[q.id] = 'Це поле є обов\'язковим для заповнення.';
+        }
+      }
+    });
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // Scroll to first error
@@ -130,6 +149,7 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
       if (errElem) {
         errElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+      setSubmitError(`Заповніть усі обов'язкові поля брифу (${Object.keys(newErrors).length} незаповнених).`);
       return;
     }
 

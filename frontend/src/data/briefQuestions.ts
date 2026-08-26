@@ -102,6 +102,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     title: 'Назва інтернет-магазину риболовлі',
     description: 'Діюча назва бренду або робочий варіант назви',
     type: 'text',
+    required: true,
     placeholder: 'Наприклад: FishMaster, Рибальський Рай тощо'
   },
   {
@@ -111,6 +112,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     title: 'Які головні цілі створення цього інтернет-магазину?',
     description: 'Можна обрати кілька варіантів',
     type: 'checkbox',
+    required: true,
     options: [
       'Запуск бізнесу з нуля',
       'Перехід роздрібного магазину в онлайн',
@@ -127,6 +129,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     title: 'Які основні проблеми покупців має вирішувати цей інтернет-магазин?',
     description: 'Оберіть болі та потреби ваших клієнтів',
     type: 'checkbox',
+    required: true,
     options: [
       'Складність вибору для новачків',
       'Дефіцит специфічних або професійних товарів у регіонах',
@@ -143,6 +146,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     title: 'У чому унікальність інтернет-магазину (УТП)?',
     description: 'Ключові переваги над конкурентами',
     type: 'checkbox',
+    required: true,
     options: [
       'Низькі ціни та акції',
       'Ексклюзивні бренди, яких немає в Україні',
@@ -187,6 +191,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     title: 'Хто ваш основний покупець?',
     description: 'Оберіть одну або кілька категорій клієнтів',
     type: 'checkbox',
+    required: true,
     options: [
       'Любителі вихідного дня',
       'Професійні спортсмени',
@@ -217,6 +222,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-audience',
     title: 'Географія та мова проекту',
     type: 'radio',
+    required: true,
     options: [
       'Локальний / Національний ринок (Робота виключно в межах України, інтерфейс українською мовою)',
       'Міжнародний ринок (Вихід на закордонні ринки: підтримка України + країн ЄС, інтерфейс українською та англійською мовами)'
@@ -231,6 +237,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-features',
     title: 'Які особливі функції каталогу потрібні?',
     type: 'checkbox',
+    required: true,
     options: [
       'Фільтрація за характеристиками (тест вудилища, довжина, вага)',
       'Інтерактивна схема вибору приманок',
@@ -245,6 +252,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-features',
     title: 'Які способи доставки товарів підключити?',
     type: 'checkbox',
+    required: true,
     options: [
       'Нова Пошта',
       'Укрпошта',
@@ -258,6 +266,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-features',
     title: 'Які методи оплати мають бути доступні на сайті інтернет-магазину?',
     type: 'checkbox',
+    required: true,
     options: [
       'Онлайн-оплата карткою на сайті (Apple Pay, Google Pay, Visa/Mastercard)',
       'Оплата при отриманні (післяплата / накладений платіж)',
@@ -285,6 +294,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-features',
     title: 'Чи потрібен особистий кабінет рибалки?',
     type: 'radio',
+    required: true,
     options: [
       'Так, з історією замовлень та системою лояльності',
       'Ні, достатньо швидкої покупки без реєстрації'
@@ -298,6 +308,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-style',
     title: 'Які емоції має викликати дизайн сайту?',
     type: 'radio',
+    required: true,
     options: [
       'Еко-стиль: спокій, затишок, дика природа (зелені, коричневі тони)',
       'Сучасний хай-тек: технологічність, драйв (яскраві акценти, темна тема)',
@@ -331,6 +342,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-limits',
     title: 'Очікувані терміни запуску MVP',
     type: 'radio',
+    required: true,
     options: [
       'До 1 місяця',
       '1 - 3 місяці',
@@ -344,6 +356,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-limits',
     title: 'Плановий бюджет на розробку',
     type: 'radio',
+    required: true,
     options: [
       'До 1000$',
       '1000$ - 3000$',
@@ -369,6 +382,7 @@ export const BRIEF_QUESTIONS: Question[] = [
     sectionId: 'sec-limits',
     title: 'Що має стати кінцевим результатом проекту?',
     type: 'radio',
+    required: true,
     options: [
       'Повністю готовий до роботи сайт інтернет-магазину риболовлі',
       'Тільки розроблений або протестований сайт інтернет-магазину',
