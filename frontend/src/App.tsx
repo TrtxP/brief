@@ -81,7 +81,7 @@ export function App() {
       {/* Top Navigation */}
       <Header
         answeredCount={answeredCount}
-        totalCount={24}
+        totalCount={34}
         lastSavedTime={lastSavedTime}
         currentRoute={currentRoute}
         onRouteChange={handleRouteChange}

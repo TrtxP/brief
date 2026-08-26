@@ -14,7 +14,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   answeredCount = 0,
-  totalCount = 24,
+  totalCount = 34,
   lastSavedTime,
   isAdmin = false,
   currentRoute,
@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '70px' }}>
         {/* Brand */}
-        <div 
+        <div
           onClick={() => onRouteChange('brief')}
           style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
         >
