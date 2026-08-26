@@ -24,6 +24,11 @@ class Router
         self::addRoute('PUT', $path, $handler);
     }
 
+    public static function patch(string $path, $handler): void
+    {
+        self::addRoute('PATCH', $path, $handler);
+    }
+
     public static function delete(string $path, $handler): void
     {
         self::addRoute('DELETE', $path, $handler);

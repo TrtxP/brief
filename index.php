@@ -87,7 +87,7 @@ $allowedOrigins = $config['cors_allowed_origins'] ?? ['http://localhost:5173'];
 if (in_array($origin, $allowedOrigins, true) || $config['is_dev']) {
     header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
     header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept");
 }
 
@@ -109,8 +109,8 @@ Router::post('/api/admin/logout', [AdminController::class, 'logout']);
 // Admin Management Endpoints
 Router::get('/api/admin/submissions', [AdminController::class, 'getSubmissions']);
 Router::get('/api/admin/submissions/{id}', [AdminController::class, 'getSubmission']);
-Router::put('/api/admin/submissions/{id}', [AdminController::class, 'updateSubmission']);
-Router::put('/api/admin/submissions/{id}/status', [AdminController::class, 'updateStatus']);
+Router::patch('/api/admin/submissions/{id}', [AdminController::class, 'updateSubmission']);
+Router::patch('/api/admin/submissions/{id}/status', [AdminController::class, 'updateStatus']);
 Router::delete('/api/admin/submissions/{id}', [AdminController::class, 'deleteSubmission']);
 Router::get('/api/admin/export', [AdminController::class, 'export']);
 

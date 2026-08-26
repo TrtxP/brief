@@ -133,14 +133,14 @@ class ApiService {
 
   public async adminUpdateSubmission(id: number, data: Partial<SubmissionItem>): Promise<{ data: SubmissionItem; message: string }> {
     return this.request(`/admin/submissions/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(data)
     });
   }
 
   public async adminUpdateStatus(id: number, status: SubmissionStatus): Promise<{ message: string }> {
     return this.request(`/admin/submissions/${id}/status`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify({ status })
     });
   }

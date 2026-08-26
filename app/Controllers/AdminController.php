@@ -136,7 +136,7 @@ class AdminController extends Controller
 
     /**
      * Full edit of recorded answers and metadata
-     * PUT /api/admin/submissions/{id}
+     * PATCH /api/admin/submissions/{id}
      */
     public function updateSubmission(string $id): void
     {
@@ -221,7 +221,7 @@ class AdminController extends Controller
 
     /**
      * Quick status update
-     * PUT /api/admin/submissions/{id}/status
+     * PATCH /api/admin/submissions/{id}/status
      */
     public function updateStatus(string $id): void
     {
