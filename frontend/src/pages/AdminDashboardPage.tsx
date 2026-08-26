@@ -157,6 +157,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
             <span>Експорт JSON</span>
           </a>
 
+          <a href={api.getExportUrl('xlsx')}
+             className="btn btn-secondary btn-sm"
+             target="_blank"
+             rel="noreferrer"
+             title="Завантажити у форматі XLSX"
+          >
+            <Download size={14} />
+            <span>Експорт XSLX</span>
+          </a>
+
           <button
             onClick={() => fetchSubmissions()}
             className="btn btn-secondary btn-sm"

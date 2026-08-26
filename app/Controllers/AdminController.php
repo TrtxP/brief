@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Core\Controller;
@@ -6,6 +7,8 @@ use App\Core\Auth;
 use App\Core\Validator;
 use App\Models\AdminUser;
 use App\Models\BriefSubmission;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
  * Admin Panel Controller
@@ -294,13 +297,74 @@ class AdminController extends Controller
             exit;
         }
 
+        if ($format == 'xlsx') {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle('Брифи');
+
+            $sheet->fromArray([
+                'ID',
+                'Код брифу',
+                'Клієнт',
+                'Телефон',
+                'Спосіб зв\'язку',
+                'Зручний час',
+                'Назва магазину',
+                'Бюджет',
+                'Терміни',
+                'Статус',
+                'Нотатки менеджера',
+                'Дата створення',
+                'Всі відповіді (JSON)',
+            ], null, 'A1');
+
+            $rowNumber = 2;
+
+            foreach (BriefSubmission::cursorAll() as $row) {
+                $sheet->fromArray([[
+                    $row['id'],
+                    $row['reference_code'],
+                    $row['client_name'],
+                    $row['phone'],
+                    $row['contact_method'],
+                    $row['preferred_time'],
+                    $row['store_name'],
+                    $row['budget'],
+                    $row['timeline'],
+                    $row['status'],
+                    $row['notes'],
+                    $row['created_at'],
+                    $row['answers_json']
+                ]], null, "A{$rowNumber}");
+
+                $rowNumber++;
+            }
+
+            $sheet->freezePane('A2');
+            $sheet->setAutoFilter($sheet->calculateWorksheetDimension());
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8');
+            header("Content-Disposition: attachment; filename=\"{$filename}.xlsx\"");
+            header('Cache-Control: max-age=0');
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+
+            $spreadsheet->disconnectWorksheets();
+            exit;
+        }
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         // Default: CSV export with BOM for UTF-8 Excel support
         header('Content-Type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=\"{$filename}.csv\"");
 
         $output = fopen('php://output', 'w');
         // UTF-8 BOM for Excel
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
         // CSV Header
         fputcsv($output, [

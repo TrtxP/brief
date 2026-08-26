@@ -151,7 +151,7 @@ class ApiService {
     });
   }
 
-  public getExportUrl(format: 'csv' | 'json'): string {
+  public getExportUrl(format: 'csv' | 'json' | 'xlsx'): string {
     const token = this.getToken();
     return `${getApiBase()}/admin/export?format=${format}${token ? '&token=' + encodeURIComponent(token) : ''}`;
   }
