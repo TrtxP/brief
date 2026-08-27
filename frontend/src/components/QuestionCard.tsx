@@ -75,7 +75,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         padding: '24px',
         marginBottom: '20px',
         borderColor: error ? 'var(--accent-rose)' : undefined,
-        transition: 'all 0.2s ease'
+        transition: 'border-color 0.2s ease'
       }}
     >
       {/* Question Header */}

@@ -123,20 +123,8 @@ export function App() {
         fontSize: '13px',
         color: 'var(--text-muted)'
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div>
-            © {new Date().getFullYear()} Структурований бриф інтернет-магазину риболовлі. Усі права захищено.
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ color: 'var(--text-accent)' }}>Чистий PHP (MVC) + Vite + React TS</span>
-            <span>•</span>
-            <button
-              onClick={() => handleRouteChange(currentRoute === 'brief' ? 'admin' : 'brief')}
-              style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px' }}
-            >
-              {currentRoute === 'brief' ? 'Вхід в адмінку' : 'Публічний бриф'}
-            </button>
-          </div>
+        <div className="container">
+          © {new Date().getFullYear()} Структурований бриф інтернет-магазину риболовлі. Усі права захищено.
         </div>
       </footer>
     </div>

@@ -93,7 +93,8 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
       justifyContent: 'center',
       background: 'rgba(0, 0, 0, 0.8)',
       backdropFilter: 'blur(8px)',
-      padding: '20px'
+      padding: '20px',
+      overscrollBehavior: 'contain'
     }}>
       <div className="glass-panel-elevated animate-fade-in" style={{
         maxWidth: '1000px',
@@ -127,16 +128,7 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="btn btn-primary btn-sm"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              <Save size={15} />
-              <span>{isSaving ? 'Збереження...' : 'Зберегти зміни'}</span>
-            </button>
+          <div>
             <button
               onClick={onClose}
               className="btn btn-secondary btn-sm"
@@ -184,7 +176,9 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px'
+          gap: '24px',
+          overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch'
         }}>
           {/* Top Row: General Settings & Manager Notes */}
           <div style={{
@@ -290,7 +284,7 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                     fontWeight: 600,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
-                    transition: 'all 0.2s ease'
+                    transition: 'background 0.2s ease, color 0.2s ease'
                   }}
                 >
                   {idx + 1}. {sec.title}
@@ -461,16 +455,9 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           background: 'var(--bg-surface)'
         }}>
-          <button
-            onClick={onClose}
-            className="btn btn-secondary btn-sm"
-          >
-            Закрити без збереження
-          </button>
-
           <button
             onClick={handleSave}
             disabled={isSaving}

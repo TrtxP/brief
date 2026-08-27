@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BRIEF_SECTIONS, BRIEF_QUESTIONS } from '../data/briefQuestions';
 import { BriefAnswers, SubmissionResult } from '../types/brief';
 import { QuestionCard } from '../components/QuestionCard';
-import { SectionNav } from '../components/SectionNav';
 import { SuccessModal } from '../components/SuccessModal';
 import { api } from '../services/api';
 import { Send, Trash2, Sparkles, AlertCircle, Info, Fish } from 'lucide-react';
@@ -37,18 +36,32 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     return typeof v === 'string' && v.trim().length > 0;
   }).length;
 
-  // Auto-save to localStorage
+  // Debounced auto-save to localStorage (500ms)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-      const now = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-      setLastSavedTime(now);
-      if (onSavedChange) {
-        onSavedChange(answeredCount, now);
-      }
-    } catch {
-      // Ignore storage errors
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
     }
+
+    saveTimerRef.current = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
+        const now = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+        setLastSavedTime(now);
+        if (onSavedChange) {
+          onSavedChange(answeredCount, now);
+        }
+      } catch {
+        // Ignore storage errors
+      }
+    }, 500);
+
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
   }, [answers, answeredCount, onSavedChange]);
 
   // Section completion stats for sidebar
@@ -247,15 +260,10 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
         </div>
       </div>
 
-      {/* Main Grid: Form + Sticky Sidebar */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) 280px',
-        gap: '32px',
-        alignItems: 'start'
-      }} className="brief-main-grid">
+      {/* Form Content */}
+      <div>
 
-        {/* Left Column: All Sections & Questions */}
+        {/* All Sections & Questions */}
         <form onSubmit={handleSubmit}>
           {BRIEF_SECTIONS.map((section, sIdx) => {
             const sectionQuestions = BRIEF_QUESTIONS.filter(q => section.questionIds.includes(q.id));
@@ -373,16 +381,6 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
             </button>
           </div>
         </form>
-
-        {/* Right Column: Sticky Navigation TOC */}
-        <div className="brief-sidebar">
-          <SectionNav
-            sections={BRIEF_SECTIONS}
-            activeSectionId={activeSectionId}
-            onSelectSection={handleScrollToSection}
-            sectionCompletion={sectionCompletion}
-          />
-        </div>
       </div>
 
       {/* Success Modal on Submission */}
@@ -397,17 +395,6 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
           onClose={() => setSubmissionResult(null)}
         />
       )}
-
-      <style>{`
-        @media (max-width: 900px) {
-          .brief-main-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .brief-sidebar {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

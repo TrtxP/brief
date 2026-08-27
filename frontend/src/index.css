@@ -130,11 +130,19 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-color: var(--bg-main);
+  transition: background-color 0.25s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-image: 
     radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.05) 0px, transparent 50%);
-  background-attachment: fixed;
-  transition: background-color 0.25s ease;
+  will-change: transform;
+  pointer-events: none;
 }
 
 /* Custom Scrollbar */
@@ -163,7 +171,7 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: var(--text-accent);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
 }
 a:hover {
   color: var(--accent-cyan-light);
@@ -223,7 +231,7 @@ a:hover {
   font-weight: 600;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   outline: none;
   text-decoration: none;
@@ -297,7 +305,7 @@ a:hover {
   color: var(--input-text);
   font-family: var(--font-main);
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   outline: none;
 }
 
@@ -332,7 +340,7 @@ a:hover {
   border: 1px solid var(--choice-border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 
@@ -358,7 +366,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .choice-indicator.radio {
@@ -396,7 +404,7 @@ a:hover {
   padding: 32px 28px;
   text-align: center;
   box-shadow: var(--shadow-lg);
-  transition: all 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .action-card-title {
@@ -507,4 +515,22 @@ a:hover {
 
 .pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* ==========================================================
+   Mobile / Touch Performance Overrides
+   Removes expensive backdrop-filter and fixed gradient
+   on devices without hover (phones, tablets) to ensure
+   smooth 60fps scrolling. Desktop stays unchanged.
+   ========================================================== */
+@media (hover: none) {
+  body::before {
+    display: none;
+  }
+
+  .glass-panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--bg-surface);
+  }
 }

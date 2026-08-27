@@ -63,3 +63,5 @@ temp/
 *.tmp
 
 view/*
+
+brief_db.sql

@@ -69,7 +69,7 @@ export const SectionNav: React.FC<SectionNavProps> = ({
               color: isActive ? 'var(--text-accent)' : 'var(--text-primary)',
               cursor: 'pointer',
               textAlign: 'left',
-              transition: 'all 0.2s ease',
+              transition: 'background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
               outline: 'none',
               boxShadow: isActive ? '0 0 15px rgba(2, 132, 199, 0.2)' : 'none'
             }}

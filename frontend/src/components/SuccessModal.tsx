@@ -51,7 +51,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
       justifyContent: 'center',
       background: 'rgba(0, 0, 0, 0.75)',
       backdropFilter: 'blur(8px)',
-      padding: '20px'
+      padding: '20px',
+      overscrollBehavior: 'contain'
     }}>
       <div className="glass-panel-elevated animate-fade-in" style={{
         maxWidth: '540px',
