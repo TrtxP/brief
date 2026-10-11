@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question } from '../types/brief';
-import { Check, HelpCircle } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 interface QuestionCardProps {
   question: Question;
@@ -86,17 +86,12 @@ export const QuestionCard = React.memo<QuestionCardProps>(({
   return (
     <div 
       id={`q-${question.id}`} 
-      className="glass-panel question-card" 
-      style={{
-        borderColor: error ? 'var(--accent-rose)' : undefined,
-      }}
+      className={`question-item ${error ? 'has-error' : ''}`}
     >
       {/* Question Header */}
       <div className="question-header">
         <div className="question-title-row">
-          <span className="question-badge">
-            #{question.index}
-          </span>
+          <span className="question-num">#{question.index}</span>
           <h3 className="question-title">
             {question.title}
             {question.required && (
@@ -150,99 +145,107 @@ export const QuestionCard = React.memo<QuestionCardProps>(({
           </select>
         )}
 
-        {/* Radio Buttons (Single Choice) */}
+        {/* Radio Buttons (Native radio inside label) */}
         {question.type === 'radio' && (
-          <div className="choices-stack">
+          <div className="options-group">
             {question.options?.map(opt => {
               const isSelected = stringValue === opt;
               return (
-                <div
+                <label
                   key={opt}
-                  className={`choice-card ${isSelected ? 'selected' : ''}`}
-                  onClick={() => handleRadioSelect(opt)}
+                  className={`option-label ${isSelected ? 'is-selected' : ''}`}
                 >
-                  <div className="choice-indicator radio" />
-                  <span className="choice-text">{opt}</span>
-                </div>
+                  <input
+                    type="radio"
+                    name={`q-${question.id}`}
+                    className="option-native-control"
+                    checked={isSelected}
+                    onChange={() => handleRadioSelect(opt)}
+                  />
+                  <span className="option-text">{opt}</span>
+                </label>
               );
             })}
 
             {/* Optional "Other" for Radio */}
             {question.hasOther && (
-              <div
-                className={`choice-card ${isOtherRadioSelected ? 'selected' : ''}`}
-                style={{ flexDirection: 'column', alignItems: 'stretch', gap: '10px' }}
-                onClick={() => {
-                  if (!isOtherRadioSelected) {
-                    handleRadioSelect(customRadioText.trim() ? `Інше: ${customRadioText}` : 'Інше');
-                  }
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div className="choice-indicator radio" />
-                  <span className="choice-text">Інше (свій варіант)</span>
+              <div className={`option-label ${isOtherRadioSelected ? 'is-selected' : ''}`}>
+                <div className="option-other-container">
+                  <label className="option-other-row" style={{ cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name={`q-${question.id}`}
+                      className="option-native-control"
+                      checked={isOtherRadioSelected}
+                      onChange={() => {
+                        if (!isOtherRadioSelected) {
+                          handleRadioSelect(customRadioText.trim() ? `Інше: ${customRadioText}` : 'Інше');
+                        }
+                      }}
+                    />
+                    <span className="option-text">Інше (свій варіант)</span>
+                  </label>
+                  {isOtherRadioSelected && (
+                    <input
+                      type="text"
+                      className="input option-other-input"
+                      value={customRadioText}
+                      onChange={e => handleOtherRadioChange(e.target.value)}
+                      placeholder="Вкажіть свій варіант..."
+                      autoFocus
+                    />
+                  )}
                 </div>
-                {isOtherRadioSelected && (
-                  <input
-                    type="text"
-                    className="input"
-                    value={customRadioText}
-                    onChange={e => handleOtherRadioChange(e.target.value)}
-                    placeholder="Вкажіть свій варіант..."
-                    onClick={e => e.stopPropagation()}
-                    autoFocus
-                    style={{ marginTop: '4px', background: 'var(--bg-surface)' }}
-                  />
-                )}
               </div>
             )}
           </div>
         )}
 
-        {/* Checkbox (Multi Choice) */}
+        {/* Checkbox (Native checkbox inside label) */}
         {question.type === 'checkbox' && (
-          <div className="choices-stack">
+          <div className="options-group">
             {question.options?.map(opt => {
               const isSelected = arrayValue.includes(opt);
               return (
-                <div
+                <label
                   key={opt}
-                  className={`choice-card ${isSelected ? 'selected' : ''}`}
-                  onClick={() => handleCheckboxToggle(opt)}
+                  className={`option-label ${isSelected ? 'is-selected' : ''}`}
                 >
-                  <div className="choice-indicator checkbox">
-                    {isSelected && <Check size={14} style={{ color: '#ffffff' }} />}
-                  </div>
-                  <span className="choice-text">{opt}</span>
-                </div>
+                  <input
+                    type="checkbox"
+                    className="option-native-control"
+                    checked={isSelected}
+                    onChange={() => handleCheckboxToggle(opt)}
+                  />
+                  <span className="option-text">{opt}</span>
+                </label>
               );
             })}
 
             {/* Optional "Other" for Checkbox */}
             {question.hasOther && (
-              <div
-                className={`choice-card ${isOtherCheckboxSelected ? 'selected' : ''}`}
-                style={{ flexDirection: 'column', alignItems: 'stretch', gap: '10px' }}
-                onClick={handleOtherCheckboxToggle}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div className="choice-indicator checkbox">
-                    {isOtherCheckboxSelected && <Check size={14} style={{ color: '#ffffff' }} />}
-                  </div>
-                  <span className="choice-text">Інше (свій варіант)</span>
+              <div className={`option-label ${isOtherCheckboxSelected ? 'is-selected' : ''}`}>
+                <div className="option-other-container">
+                  <label className="option-other-row" style={{ cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      className="option-native-control"
+                      checked={isOtherCheckboxSelected}
+                      onChange={handleOtherCheckboxToggle}
+                    />
+                    <span className="option-text">Інше (свій варіант)</span>
+                  </label>
+                  {isOtherCheckboxSelected && (
+                    <input
+                      type="text"
+                      className="input option-other-input"
+                      value={customCheckboxText}
+                      onChange={e => handleOtherCheckboxTextChange(e.target.value)}
+                      placeholder="Опишіть власний варіант або побажання..."
+                      autoFocus
+                    />
+                  )}
                 </div>
-                {isOtherCheckboxSelected && (
-                  <input
-                    type="text"
-                    className="input"
-                    value={customCheckboxText}
-                    onChange={e => handleOtherCheckboxTextChange(e.target.value)}
-                    placeholder="Опишіть власний варіант або побажання..."
-                    onClick={e => e.stopPropagation()}
-                    autoFocus
-                    style={{ marginTop: '4px', background: 'var(--bg-surface)' }}
-                  />
-                )}
               </div>
             )}
           </div>
@@ -259,3 +262,4 @@ export const QuestionCard = React.memo<QuestionCardProps>(({
     </div>
   );
 });
+

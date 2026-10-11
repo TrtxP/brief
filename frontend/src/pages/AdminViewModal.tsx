@@ -98,30 +98,21 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
   }, [activeTab]);
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 100,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(8px)',
-      padding: '20px',
-      overscrollBehavior: 'contain'
-    }}>
-      <div className="glass-panel-elevated animate-fade-in" style={{
-        maxWidth: '1020px',
-        width: '100%',
-        maxHeight: '92vh',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-card" 
+        style={{
+          maxWidth: '1000px',
+          maxHeight: '92vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
+        onClick={e => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div style={{
-          padding: '20px 24px',
+          padding: '18px 24px',
           borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
@@ -132,11 +123,11 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <span className="badge badge-new" style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }}>
+              <span className="badge badge-new" style={{ fontFamily: 'var(--font-mono)' }}>
                 {submission.reference_code}
               </span>
               {getStatusBadge(submission.status)}
-              <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
                 {submission.client_name || 'Бриф без імені'}
               </h2>
             </div>
@@ -148,150 +139,135 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
+              type="button"
               onClick={() => onEdit(submission)}
               className="btn btn-primary btn-sm"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               title="Перейти до редагування брифу"
             >
-              <Edit3 size={14} />
+              <Edit3 size={13} />
               <span>Редагувати</span>
             </button>
 
             <button
+              type="button"
               onClick={() => onDelete(submission.id, submission.reference_code)}
               className="btn btn-danger btn-sm"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               title="Видалити цей бриф"
             >
-              <Trash2 size={14} />
+              <Trash2 size={13} />
               <span>Видалити</span>
             </button>
 
             <button
+              type="button"
               onClick={onClose}
               className="btn btn-secondary btn-sm"
-              style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%' }}
+              style={{ width: '30px', height: '30px', padding: 0 }}
               title="Закрити вікно"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           </div>
         </div>
 
-        {/* Modal Body (Scrollable) */}
+        {/* Modal Scrollable Body */}
         <div style={{
           padding: '24px',
           overflowY: 'auto',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px',
-          overscrollBehavior: 'contain',
-          WebkitOverflowScrolling: 'touch'
+          gap: '24px'
         }}>
-          {/* Key Summary Cards Grid */}
+          {/* Top Info Grid: Contacts & Primary Details */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '12px',
             background: 'var(--bg-surface-elevated)',
-            padding: '18px',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-subtle)'
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '16px'
           }}>
-            {/* Contact person */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <User size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Контактна особа</span>
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {submission.client_name || '—'}
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Phone size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Телефон</span>
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {submission.phone ? (
-                  <a href={`tel:${submission.phone}`} style={{ color: 'var(--text-accent)' }}>
-                    {submission.phone}
-                  </a>
-                ) : '—'}
-              </div>
-            </div>
-
-            {/* Contact method */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <MessageSquare size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Зв'язок / Час</span>
-              </div>
-              <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
-                {submission.contact_method || 'Спосіб не вказано'}
-                {submission.preferred_time ? ` (${submission.preferred_time})` : ''}
-              </div>
-            </div>
-
-            {/* Store Name */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Store size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Магазин / Бренд</span>
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {submission.store_name || 'Не вказано'}
-              </div>
-            </div>
-
-            {/* Budget */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <DollarSign size={13} style={{ color: 'var(--accent-amber)' }} />
-                <span>Бюджет проекту</span>
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--accent-amber)' }}>
-                {submission.budget || 'Не обрано'}
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Calendar size={13} style={{ color: 'var(--accent-emerald)' }} />
-                <span>Бажані терміни</span>
-              </div>
-              <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
-                {submission.timeline || 'Не вказано'}
-              </div>
-            </div>
-
-            {/* Manager Notes if present */}
-            {submission.notes && (
-              <div style={{
-                gridColumn: '1 / -1',
-                marginTop: '6px',
-                padding: '12px 14px',
-                background: 'rgba(245, 158, 11, 0.1)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                borderRadius: 'var(--radius-sm)'
-              }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-amber)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <MessageSquare size={14} />
-                  <span>Внутрішні нотатки менеджера</span>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <User size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Клієнт / Компанія</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {submission.client_name || 'Не вказано'}
                 </div>
-                <p style={{ fontSize: '13px', color: 'var(--text-primary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
-                  {submission.notes}
-                </p>
               </div>
-            )}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <Phone size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Телефон</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                  {submission.phone || 'Не вказано'}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <MessageSquare size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Зв'язок / Час</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                  {submission.contact_method || '—'} {submission.preferred_time ? `(${submission.preferred_time})` : ''}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <Store size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Назва магазину</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                  {submission.store_name || '—'}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <DollarSign size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Бюджетні рамки</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                  {submission.budget || '—'}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <Calendar size={15} style={{ color: 'var(--text-muted)', marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Очікуваний термін</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                  {submission.timeline || '—'}
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Manager Notes */}
+          {submission.notes && (
+            <div style={{
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '14px 18px'
+            }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                Внутрішні нотатки менеджера:
+              </div>
+              <div style={{ fontSize: '13px', color: 'var(--text-primary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                {submission.notes}
+              </div>
+            </div>
+          )}
 
           {/* Section Navigation Tabs */}
           <div>
@@ -303,21 +279,16 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
               paddingBottom: '8px'
             }}>
               <button
+                type="button"
                 onClick={() => setActiveTab('all')}
+                className="btn btn-sm"
                 style={{
-                  padding: '8px 14px',
-                  borderRadius: 'var(--radius-sm)',
-                  background: activeTab === 'all' ? 'var(--accent-cyan)' : 'var(--bg-surface-elevated)',
-                  color: activeTab === 'all' ? '#ffffff' : 'var(--text-secondary)',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'background 0.2s ease, color 0.2s ease',
+                  background: activeTab === 'all' ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                  color: activeTab === 'all' ? 'var(--accent-primary-text)' : 'var(--text-secondary)',
+                  borderColor: activeTab === 'all' ? 'var(--accent-primary)' : 'var(--border-subtle)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '5px'
                 }}
               >
                 <Layers size={13} />
@@ -329,33 +300,26 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
                 const stat = sectionStats[sec.id] || { answered: 0, total: sec.questionIds.length };
                 return (
                   <button
+                    type="button"
                     key={sec.id}
                     onClick={() => setActiveTab(sec.id)}
+                    className="btn btn-sm"
                     style={{
-                      padding: '8px 14px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: isSelected ? 'var(--accent-cyan)' : 'var(--bg-surface-elevated)',
-                      color: isSelected ? '#ffffff' : 'var(--text-secondary)',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      transition: 'background 0.2s ease, color 0.2s ease',
+                      background: isSelected ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                      color: isSelected ? 'var(--accent-primary-text)' : 'var(--text-secondary)',
+                      borderColor: isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '5px'
                     }}
                   >
                     <span>{idx + 1}. {sec.title}</span>
                     <span style={{
-                      fontSize: '11px',
-                      padding: '1px 6px',
-                      borderRadius: '10px',
-                      background: isSelected ? 'rgba(255, 255, 255, 0.25)' : 'rgba(148, 163, 184, 0.15)',
-                      color: isSelected ? '#ffffff' : 'var(--text-muted)'
+                      fontSize: '10px',
+                      fontFamily: 'var(--font-mono)',
+                      opacity: 0.8
                     }}>
-                      {stat.answered}/{stat.total}
+                      ({stat.answered}/{stat.total})
                     </span>
                   </button>
                 );
@@ -364,52 +328,38 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
           </div>
 
           {/* Sections & Questions Content */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {sectionsToRender.map((section) => {
               const sectionQuestions = BRIEF_QUESTIONS.filter(q => section.questionIds.includes(q.id));
               const secNumber = BRIEF_SECTIONS.findIndex(s => s.id === section.id) + 1;
 
               return (
-                <div key={section.id} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div key={section.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {/* Section Title Banner */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    padding: '10px 16px',
+                    gap: '10px',
+                    padding: '8px 12px',
                     background: 'var(--bg-surface-elevated)',
                     border: '1px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius-md)'
+                    borderRadius: 'var(--radius-xs)'
                   }}>
-                    <div style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '6px',
-                      background: 'rgba(2, 132, 199, 0.15)',
-                      color: 'var(--accent-cyan-light)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: '13px',
-                      fontFamily: 'var(--font-mono)'
+                    <span style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      color: 'var(--accent-primary)'
                     }}>
                       0{secNumber}
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                        {section.title}
-                      </h3>
-                      {section.description && (
-                        <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>
-                          {section.description}
-                        </p>
-                      )}
-                    </div>
+                    </span>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {section.title}
+                    </h3>
                   </div>
 
                   {/* Questions in this section */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {sectionQuestions.map(question => {
                       const val = answers[question.id];
                       const isArray = Array.isArray(val);
@@ -420,27 +370,23 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
                         <div
                           key={question.id}
                           style={{
-                            padding: '16px 18px',
-                            background: isAnswered ? 'var(--bg-surface)' : 'rgba(30, 41, 59, 0.25)',
-                            border: `1px solid ${isAnswered ? 'var(--border-subtle)' : 'rgba(148, 163, 184, 0.08)'}`,
-                            borderRadius: 'var(--radius-md)',
-                            opacity: isAnswered ? 1 : 0.65
+                            padding: '14px 16px',
+                            background: 'var(--bg-surface)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: 'var(--radius-sm)',
+                            opacity: isAnswered ? 1 : 0.6
                           }}
                         >
                           {/* Question Header */}
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '6px' }}>
                             <span style={{
                               fontSize: '11px',
                               fontFamily: 'var(--font-mono)',
-                              color: 'var(--accent-cyan)',
-                              fontWeight: 700,
-                              background: 'rgba(2, 132, 199, 0.1)',
-                              padding: '2px 6px',
-                              borderRadius: '4px'
+                              color: 'var(--text-muted)'
                             }}>
                               #{question.index}
                             </span>
-                            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                            <div style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
                               {question.title}
                               {question.required && (
                                 <span style={{ color: 'var(--accent-rose)', marginLeft: '4px' }}>*</span>
@@ -449,47 +395,46 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
                           </div>
 
                           {question.description && (
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '10px', marginLeft: '2px' }}>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
                               {question.description}
                             </p>
                           )}
 
                           {/* Answer Value Rendering */}
-                          <div style={{ marginTop: '6px' }}>
+                          <div style={{ marginTop: '4px' }}>
                             {!isAnswered ? (
-                              <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                                 Не заповнено
                               </div>
                             ) : isArray ? (
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                 {(val as string[]).map((item, idx) => (
                                   <div
                                     key={idx}
                                     style={{
                                       display: 'inline-flex',
                                       alignItems: 'center',
-                                      gap: '6px',
-                                      padding: '6px 12px',
-                                      background: 'rgba(2, 132, 199, 0.12)',
-                                      border: '1px solid rgba(56, 189, 248, 0.3)',
-                                      borderRadius: 'var(--radius-sm)',
-                                      fontSize: '13px',
-                                      color: 'var(--text-primary)',
-                                      fontWeight: 500
+                                      gap: '5px',
+                                      padding: '4px 8px',
+                                      background: 'var(--accent-primary-muted)',
+                                      border: '1px solid var(--accent-primary)',
+                                      borderRadius: 'var(--radius-xs)',
+                                      fontSize: '12.5px',
+                                      color: 'var(--text-primary)'
                                     }}
                                   >
-                                    <Check size={13} style={{ color: 'var(--accent-cyan-light)', flexShrink: 0 }} />
+                                    <Check size={12} style={{ color: 'var(--accent-primary)' }} />
                                     <span>{item}</span>
                                   </div>
                                 ))}
                               </div>
                             ) : (
                               <div style={{
-                                padding: '10px 14px',
+                                padding: '8px 12px',
                                 background: 'var(--bg-surface-elevated)',
                                 border: '1px solid var(--border-subtle)',
-                                borderRadius: 'var(--radius-sm)',
-                                fontSize: '13.5px',
+                                borderRadius: 'var(--radius-xs)',
+                                fontSize: '13px',
                                 color: 'var(--text-primary)',
                                 lineHeight: 1.5,
                                 whiteSpace: 'pre-wrap'
@@ -510,7 +455,7 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
 
         {/* Modal Footer */}
         <div style={{
-          padding: '16px 24px',
+          padding: '14px 24px',
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
@@ -519,7 +464,7 @@ export const AdminViewModal: React.FC<AdminViewModalProps> = ({
           gap: '12px',
           background: 'var(--bg-surface)'
         }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             Заповнено <strong>{answeredCount}</strong> з <strong>{BRIEF_QUESTIONS.length}</strong> питань
           </div>
         </div>

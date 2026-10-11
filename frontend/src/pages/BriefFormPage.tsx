@@ -4,7 +4,7 @@ import { BriefAnswers, SubmissionResult } from '../types/brief';
 import { QuestionCard } from '../components/QuestionCard';
 import { SuccessModal } from '../components/SuccessModal';
 import { api } from '../services/api';
-import { Send, Trash2, AlertCircle, Info, Fish } from 'lucide-react';
+import { Send, Trash2, AlertCircle } from 'lucide-react';
 
 interface BriefFormPageProps {
   onSavedChange?: (answeredCount: number, lastSavedTime: string | null) => void;
@@ -70,7 +70,7 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     };
   }, [answers, answeredCount]);
 
-  // Section completion stats for sidebar
+  // Section completion stats for sidebar (kept for SectionNav integrity)
   const sectionCompletion = useMemo(() => {
     const stats: Record<string, { answered: number; total: number }> = {};
     BRIEF_SECTIONS.forEach(sec => {
@@ -106,7 +106,7 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     setActiveSectionId(sectionId);
     const element = document.getElementById(sectionId);
     if (element) {
-      const yOffset = -90;
+      const yOffset = -70;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       window.scrollTo({ top: y, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
@@ -198,199 +198,113 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
   };
 
   return (
-    <div className="container" style={{ paddingTop: '32px', paddingBottom: '80px' }}>
-      {/* Hero Header */}
-      <div className="glass-panel" style={{
-        padding: '36px',
-        marginBottom: '36px',
-        position: 'relative',
-        overflow: 'hidden',
-        borderLeft: '4px solid var(--accent-cyan)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '20px' }}>
-          <div>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 10px',
-              borderRadius: '20px',
-              background: 'rgba(2, 132, 199, 0.12)',
-              color: 'var(--accent-cyan-light)',
-              fontSize: '12px',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '12px'
-            }}>
-              <Fish size={14} />
-              <span>Е-commerce Проектування</span>
-            </div>
-            
-            <h1 style={{ fontSize: '26px', fontWeight: 800, marginBottom: '12px', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-              Структурований бриф на розробку інтернет-магазину риболовлі
-            </h1>
+    <div className="brief-container" style={{ paddingBottom: '90px' }}>
+      {/* Hero Header - Clean Editorial Presentation */}
+      <header className="brief-hero">
+        <h1 className="brief-hero-title">
+          Структурований бриф на розробку інтернет-магазину риболовлі
+        </h1>
 
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '850px' }}>
-              Цей структурований бриф є інструментом передпроектного аналізу та ініціації розробки e-commerce системи. 
-              Мета опитування — збір, систематизація та формалізація первинних бізнес-вимог, функціональних рамок 
-              та технічних обмежень для подальшого проектування архітектури інтернет-магазину риболовлі та формування ТЗ.
-            </p>
-          </div>
-        </div>
+        <p className="brief-hero-desc">
+          Цей структурований бриф є інструментом передпроектного аналізу та ініціації розробки e-commerce системи. 
+          Мета опитування — збір, систематизація та формалізація первинних бізнес-вимог, функціональних рамок 
+          та технічних обмежень для подальшого проектування архітектури інтернет-магазину риболовлі та формування ТЗ.
+        </p>
 
-        <div style={{
-          marginTop: '20px',
-          paddingTop: '16px',
-          borderTop: '1px solid var(--border-subtle)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-          fontSize: '12px',
-          color: 'var(--text-muted)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Info size={14} style={{ color: 'var(--accent-cyan)' }} />
-            <span>Всі розділи розташовані на одній сторінці. Відповіді зберігаються автоматично на вашому пристрої.</span>
-          </div>
+        <div className="brief-hero-meta">
+          <span>Усі 6 розділів на одній сторінці. Відповіді зберігаються локально.</span>
           {answeredCount > 0 && (
             <button
+              type="button"
               onClick={handleClearDraft}
-              className="btn btn-secondary btn-sm"
-              style={{ fontSize: '11px', color: 'var(--text-muted)' }}
+              className="btn-text"
               title="Очистити всі поля"
             >
-              <Trash2 size={12} />
+              <Trash2 size={13} />
               <span>Очистити чернетку</span>
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       {/* Form Content */}
-      <div>
+      <form onSubmit={handleSubmit} noValidate>
+        {BRIEF_SECTIONS.map((section, sIdx) => {
+          const sectionQuestions = BRIEF_QUESTIONS.filter(q => section.questionIds.includes(q.id));
 
-        {/* All Sections & Questions */}
-        <form onSubmit={handleSubmit}>
-          {BRIEF_SECTIONS.map((section, sIdx) => {
-            const sectionQuestions = BRIEF_QUESTIONS.filter(q => section.questionIds.includes(q.id));
-
-            return (
-              <div 
-                key={section.id} 
-                id={section.id}
-                style={{
-                  marginBottom: '40px',
-                  scrollMarginTop: '90px'
-                }}
-              >
-                {/* Section Title Banner */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  marginBottom: '16px',
-                  padding: '12px 18px',
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)'
-                }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '8px',
-                    background: 'rgba(2, 132, 199, 0.15)',
-                    color: 'var(--accent-cyan-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    fontFamily: 'var(--font-mono)'
-                  }}>
-                    0{sIdx + 1}
-                  </div>
-                  <div>
-                    <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {section.title}
-                    </h2>
-                    {section.description && (
-                      <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {section.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Questions for this section */}
-                {sectionQuestions.map(question => (
-                  <QuestionCard
-                    key={question.id}
-                    question={question}
-                    value={answers[question.id]}
-                    onChange={handleAnswerChange}
-                    error={errors[question.id]}
-                  />
-                ))}
-              </div>
-            );
-          })}
-
-          {/* Submit Action Box */}
-          <div className="action-card" style={{ marginTop: '20px' }}>
-            <h3 className="action-card-title">
-              Готові надіслати бриф?
-            </h3>
-            <p className="action-card-desc">
-              Перевірте вказані контакти. Після збереження ви отримаєте унікальний код брифу та можливість завантажити копію.
-            </p>
-
-            {submitError && (
-              <div style={{
-                background: 'rgba(244, 63, 94, 0.15)',
-                border: '1px solid var(--accent-rose)',
-                color: '#fb7185',
-                padding: '12px 16px',
-                borderRadius: 'var(--radius-md)',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                fontSize: '13px'
-              }}>
-                <AlertCircle size={16} />
-                <span>{submitError}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary btn-lg"
-              style={{
-                minWidth: '240px',
-                fontSize: '16px',
-                opacity: isSubmitting ? 0.7 : 1,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer'
-              }}
+          return (
+            <section 
+              key={section.id} 
+              id={section.id}
+              className="brief-section-block"
+              style={{ scrollMarginTop: '80px' }}
             >
-              {isSubmitting ? (
-                <>
-                  <span className="pulse-glow">Обробка та збереження...</span>
-                </>
-              ) : (
-                <>
-                  <Send size={18} />
-                  <span>Відправити заповнений бриф</span>
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
+              {/* Section Header: Large Mono Number + Title + Line */}
+              <div className="brief-section-header">
+                <div className="brief-section-title-row">
+                  <span className="brief-section-num">0{sIdx + 1}</span>
+                  <h2 className="brief-section-title">
+                    {section.title}
+                  </h2>
+                </div>
+                {section.description && (
+                  <p className="brief-section-desc">
+                    {section.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Questions for this section */}
+              {sectionQuestions.map(question => (
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  value={answers[question.id]}
+                  onChange={handleAnswerChange}
+                  error={errors[question.id]}
+                />
+              ))}
+            </section>
+          );
+        })}
+
+        {/* Submit Action Box */}
+        <div className="action-box">
+          <h3 className="action-box-title">
+            Готові надіслати бриф?
+          </h3>
+          <p className="action-box-desc">
+            Перевірте вказані контакти. Після збереження ви отримаєте унікальний код брифу та можливість завантажити копію у форматі JSON або роздрукувати.
+          </p>
+
+          {submitError && (
+            <div className="action-error-banner">
+              <AlertCircle size={16} />
+              <span>{submitError}</span>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-primary btn-lg"
+            style={{
+              minWidth: '240px',
+              opacity: isSubmitting ? 0.7 : 1,
+              cursor: isSubmitting ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isSubmitting ? (
+              <span>Збереження брифу...</span>
+            ) : (
+              <>
+                <Send size={16} />
+                <span>Відправити заповнений бриф</span>
+              </>
+            )}
+          </button>
+        </div>
+      </form>
 
       {/* Success Modal on Submission */}
       {submissionResult && (
@@ -410,3 +324,4 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     </div>
   );
 };
+

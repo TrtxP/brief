@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
-import { Shield, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
 
 interface AdminLoginPageProps {
   onLoginSuccess: () => void;
@@ -34,51 +34,25 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: '24px 20px'
     }}>
-      <div className="glass-panel-elevated animate-fade-in" style={{
-        maxWidth: '420px',
+      <div className="modal-card" style={{
+        maxWidth: '400px',
         width: '100%',
-        padding: '36px',
-        position: 'relative'
+        padding: '32px'
       }}>
-        {/* Shield Icon */}
-        <div style={{
-          width: '56px',
-          height: '56px',
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-          color: '#ffffff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 16px auto',
-          boxShadow: '0 8px 20px rgba(2, 132, 199, 0.35)'
-        }}>
-          <Shield size={28} />
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '21px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
+            Вхід до кабінету
+          </h2>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+            Керування брифами та редагування відповідей
+          </p>
         </div>
 
-        <h2 style={{ fontSize: '20px', fontWeight: 800, textAlign: 'center', marginBottom: '6px', color: 'var(--text-primary)' }}>
-          Вхід до адмін-панелі
-        </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '24px' }}>
-          Керування записаними брифами та редагування відповідей
-        </p>
-
         {error && (
-          <div style={{
-            background: 'rgba(244, 63, 94, 0.15)',
-            border: '1px solid var(--accent-rose)',
-            color: '#fb7185',
-            padding: '10px 14px',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '13px'
-          }}>
-            <AlertCircle size={16} />
+          <div className="action-error-banner" style={{ marginBottom: '18px' }}>
+            <AlertCircle size={15} />
             <span>{error}</span>
           </div>
         )}
@@ -89,11 +63,11 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
               Логін (Username)
             </label>
             <div style={{ position: 'relative' }}>
-              <User size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+              <User size={15} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input
                 type="text"
                 className="input"
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 placeholder="admin"
@@ -107,11 +81,11 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
               Пароль
             </label>
             <div style={{ position: 'relative' }}>
-              <Lock size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+              <Lock size={15} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input
                 type="password"
                 className="input"
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '36px' }}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -124,10 +98,10 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
             type="submit"
             disabled={loading}
             className="btn btn-primary btn-lg"
-            style={{ width: '100%', marginTop: '8px' }}
+            style={{ width: '100%', marginTop: '6px' }}
           >
-            {loading ? 'Перевірка...' : 'Увійти в кабінет'}
-            <ArrowRight size={16} />
+            {loading ? 'Перевірка...' : 'Увійти'}
+            <ArrowRight size={15} />
           </button>
         </form>
 
@@ -137,21 +111,22 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
           padding: '12px',
           background: 'var(--bg-surface-elevated)',
           border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-sm)',
           fontSize: '12px',
           color: 'var(--text-muted)',
           textAlign: 'center'
         }}>
-          <div>Тестові дані за замовчуванням:</div>
-          <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan-light)', marginTop: '4px' }}>
-            Логін: <strong>admin</strong> / Пароль: <strong>admin123</strong>
+          <div>Тестовий доступ:</div>
+          <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-primary)', marginTop: '2px', fontWeight: 600 }}>
+            admin / admin123
           </div>
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+        <div style={{ textAlign: 'center', marginTop: '18px' }}>
           <button
+            type="button"
             onClick={onBackToBrief}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '13px', cursor: 'pointer' }}
+            className="btn-text"
           >
             &larr; Повернутися до публічного брифу
           </button>

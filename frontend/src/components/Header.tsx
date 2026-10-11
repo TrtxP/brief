@@ -1,5 +1,5 @@
 import React from "react";
-import { Compass, Shield, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 interface HeaderProps {
   answeredCount?: number;
@@ -15,8 +15,6 @@ interface HeaderProps {
 export const Header = React.memo<HeaderProps>(({
   answeredCount = 0,
   totalCount = 28,
-  lastSavedTime,
-  isAdmin = false,
   currentRoute,
   onRouteChange,
   theme,
@@ -28,157 +26,66 @@ export const Header = React.memo<HeaderProps>(({
       : 0;
 
   return (
-    <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 40,
-        background:
-          theme === "dark"
-            ? "var(--bg-main)"
-            : "#ffffff",
-        borderBottom: "1px solid var(--border-subtle)",
-        transition: "background-color 0.2s ease, border-color 0.2s ease",
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: "70px",
-        }}
-      >
-        {/* Brand */}
+    <header className="site-header">
+      <div className="container site-header-inner">
+        {/* Text-First Brand Wordmark */}
         <div
           onClick={() => onRouteChange("brief")}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            cursor: "pointer",
-          }}
+          className="brand-text"
+          title="На головну сторінку брифу"
         >
-          <div
-            style={{
-              width: "42px",
-              height: "42px",
-              borderRadius: "12px",
-              background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              boxShadow: "0 4px 12px rgba(2, 132, 199, 0.35)",
-            }}
-          >
-            <Compass size={24} />
-          </div>
-          <div>
-            <div
-              style={{
-                fontWeight: 800,
-                fontSize: "17px",
-                letterSpacing: "-0.3px",
-                color: "var(--text-primary)",
-              }}
-            >
-              Angler
-              <span style={{ color: "var(--accent-cyan-light)" }}>Brief</span>
-            </div>
-            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-              {currentRoute.startsWith("admin")
-                ? "Панель адміністратора"
-                : "Бриф інтернет-магазину риболовлі"}
-            </div>
-          </div>
+          <span className="brand-title">AnglerBrief</span>
+          <span className="brand-sub">
+            {currentRoute.startsWith("admin")
+              ? "Панель адміністратора"
+              : "Опитувальник"}
+          </span>
         </div>
 
         {/* Progress & Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           {currentRoute === "brief" && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                paddingRight: "8px",
-              }}
-            >
-              <div
-                style={{
-                  textAlign: "right",
-                  display: "none",
-                  minWidth: "110px",
-                }}
-                className="desktop-progress"
-              >
-                <div
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    color: "var(--text-primary)",
-                  }}
-                >
-                  Заповнено {percent}%
-                </div>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
-                  {answeredCount} з {totalCount} питань
-                </div>
-              </div>
-              <div
-                style={{ width: "80px", display: "none" }}
-                className="desktop-progress"
-              >
-                <div className="progress-bar-container">
-                  <div
-                    className="progress-bar-fill"
-                    style={{ width: `${percent}%` }}
-                  />
-                </div>
-              </div>
+            <div className="header-progress-text">
+              <span className="header-progress-pct">Заповнено {percent}%</span>
+              <span style={{ marginLeft: "6px" }}>
+                ({answeredCount}/{totalCount})
+              </span>
             </div>
           )}
 
           {/* Theme Switcher */}
           <button
+            type="button"
             onClick={onToggleTheme}
             className="btn btn-secondary btn-sm"
-            style={{
-              width: "36px",
-              height: "36px",
-              padding: 0,
-              borderRadius: "50%",
-            }}
+            style={{ width: "32px", height: "32px", padding: 0 }}
             title={
               theme === "dark"
                 ? "Увімкнути світлу тему"
                 : "Увімкнути темну тему"
             }
           >
-            {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
           </button>
 
-          {/* Admin Navigation Button — only on brief page */}
+          {/* Navigation Button */}
           {currentRoute === "brief" && (
             <button
+              type="button"
               onClick={() => onRouteChange("admin")}
               className="btn btn-secondary btn-sm"
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
-              <Shield size={15} style={{ color: "var(--accent-cyan)" }} />
               <span>Адмін-панель</span>
             </button>
           )}
 
           {currentRoute === "admin" && (
             <button
+              type="button"
               onClick={() => {
                 window.location.hash = "";
               }}
               className="btn btn-primary btn-sm"
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
               title="Перейти до публічного брифу"
             >
               <span>До брифу</span>
@@ -186,11 +93,15 @@ export const Header = React.memo<HeaderProps>(({
           )}
         </div>
       </div>
-      <style>{`
-        @media (min-width: 640px) {
-          .desktop-progress { display: block !important; }
-        }
-      `}</style>
+
+      {/* 2px Progress line along the bottom edge of sticky header */}
+      {currentRoute === "brief" && (
+        <div
+          className="site-header-progress-line"
+          style={{ width: `${percent}%` }}
+        />
+      )}
     </header>
   );
 });
+

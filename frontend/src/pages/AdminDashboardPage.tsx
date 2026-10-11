@@ -4,7 +4,6 @@ import { AdminEditModal } from './AdminEditModal';
 import { AdminViewModal } from './AdminViewModal';
 import { api } from '../services/api';
 import { 
-  Users, 
   FileText, 
   Clock, 
   CheckCircle2, 
@@ -15,9 +14,7 @@ import {
   Edit3, 
   Eye,
   RefreshCw, 
-  AlertCircle,
-  Filter,
-  DollarSign
+  Inbox
 } from 'lucide-react';
 
 interface AdminDashboardPageProps {
@@ -70,7 +67,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
     try {
       await api.adminUpdateStatus(id, newStatus);
       setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
-      // Refresh stats
       const res = await api.adminGetSubmissions({ page });
       setStats(res.data.stats);
     } catch (err: any) {
@@ -120,7 +116,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
   // Open edit modal for full answers editing
   const handleOpenEdit = async (item: SubmissionItem) => {
     try {
-      // Fetch full details if needed
       const full = await api.adminGetSubmission(item.id);
       setEditingSubmission(full.data);
     } catch {
@@ -131,17 +126,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
   const handleUpdatedSubmission = (updated: SubmissionItem) => {
     setSubmissions(prev => prev.map(s => s.id === updated.id ? updated : s));
     setEditingSubmission(updated);
-  };
-
-  const statusLabel = (st: SubmissionStatus) => {
-    switch (st) {
-      case 'new': return 'Новий';
-      case 'in_review': return 'В обробці';
-      case 'approved': return 'Погоджено';
-      case 'rejected': return 'Відхилено';
-      case 'completed': return 'Завершено';
-      default: return st;
-    }
   };
 
   return (
@@ -156,25 +140,24 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
         marginBottom: '24px'
       }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>
             Панель керування брифами
           </h1>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-            Перегляд заявок, детальна аналітика та повне редагування зафіксованих відповідей
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+            Перегляд заявок, статистика та редагування зафіксованих відповідей
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          {/* Export Dropdown / Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <a
             href={api.getExportUrl('csv')}
             className="btn btn-secondary btn-sm"
             target="_blank"
             rel="noreferrer"
-            title="Завантажити у форматі CSV для Excel"
+            title="Завантажити у форматі CSV"
           >
-            <Download size={14} />
-            <span>Експорт CSV</span>
+            <Download size={13} />
+            <span>CSV</span>
           </a>
 
           <a
@@ -184,83 +167,112 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
             rel="noreferrer"
             title="Завантажити у форматі JSON"
           >
-            <Download size={14} />
-            <span>Експорт JSON</span>
+            <Download size={13} />
+            <span>JSON</span>
           </a>
 
-          <a href={api.getExportUrl('xlsx')}
-             className="btn btn-secondary btn-sm"
-             target="_blank"
-             rel="noreferrer"
-             title="Завантажити у форматі XLSX"
+          <a
+            href={api.getExportUrl('xlsx')}
+            className="btn btn-secondary btn-sm"
+            target="_blank"
+            rel="noreferrer"
+            title="Завантажити у форматі XLSX"
           >
-            <Download size={14} />
-            <span>Експорт XSLX</span>
+            <Download size={13} />
+            <span>XLSX</span>
           </a>
 
           <button
+            type="button"
             onClick={() => fetchSubmissions()}
             className="btn btn-secondary btn-sm"
             title="Оновити список"
           >
-            <RefreshCw size={14} className={loading ? 'pulse-glow' : ''} />
+            <RefreshCw size={13} />
           </button>
 
           <button
+            type="button"
             onClick={onLogout}
-            className="btn btn-danger btn-sm"
-            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            className="btn btn-secondary btn-sm"
+            style={{ color: 'var(--accent-rose)', borderColor: 'var(--border-subtle)' }}
           >
-            <LogOut size={14} />
+            <LogOut size={13} />
             <span>Вийти</span>
           </button>
         </div>
       </div>
 
+      {error && (
+        <div className="action-error-banner" style={{ marginBottom: '20px' }}>
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* Analytics Stats Grid */}
       {stats && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '28px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: '12px',
+          marginBottom: '24px'
         }}>
-          <div className="glass-panel" style={{ padding: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Всього брифів</span>
-              <FileText size={18} style={{ color: 'var(--accent-cyan)' }} />
+          <div style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '16px 20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Всього брифів</span>
+              <FileText size={16} style={{ color: 'var(--text-muted)' }} />
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '26px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {stats.total}
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-cyan)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Нові заявки</span>
+          <div style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '16px 20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Нові заявки</span>
               <span className="badge badge-new" style={{ fontSize: '10px' }}>NEW</span>
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '26px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {stats.by_status.new || 0}
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-amber)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>В обробці</span>
-              <Clock size={18} style={{ color: 'var(--accent-amber)' }} />
+          <div style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '16px 20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>В обробці</span>
+              <Clock size={16} style={{ color: 'var(--text-muted)' }} />
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-amber)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '26px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {stats.by_status.in_review || 0}
             </div>
           </div>
 
-          <div className="glass-panel" style={{ padding: '20px', borderLeft: '3px solid var(--accent-emerald)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Погоджено / Готово</span>
-              <CheckCircle2 size={18} style={{ color: 'var(--accent-emerald)' }} />
+          <div style={{
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '16px 20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Погоджено / Готово</span>
+              <CheckCircle2 size={16} style={{ color: 'var(--accent-primary)' }} />
             </div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '26px', fontWeight: 600, color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}>
               {(stats.by_status.approved || 0) + (stats.by_status.completed || 0)}
             </div>
           </div>
@@ -268,8 +280,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
       )}
 
       {/* Filter and Search Bar */}
-      <div className="glass-panel" style={{ padding: '16px 20px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-sm)',
+        padding: '14px 18px',
+        marginBottom: '16px'
+      }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Status Tabs */}
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             {[
@@ -281,13 +299,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
               { id: 'rejected', label: 'Відхилено' }
             ].map(tab => (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => { setStatusFilter(tab.id); setPage(1); }}
                 className="btn btn-sm"
                 style={{
-                  background: statusFilter === tab.id ? 'var(--accent-cyan)' : 'var(--bg-surface-elevated)',
-                  color: statusFilter === tab.id ? '#ffffff' : 'var(--text-secondary)',
-                  border: '1px solid var(--border-subtle)'
+                  background: statusFilter === tab.id ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                  color: statusFilter === tab.id ? 'var(--accent-primary-text)' : 'var(--text-secondary)',
+                  borderColor: statusFilter === tab.id ? 'var(--accent-primary)' : 'var(--border-subtle)'
                 }}
               >
                 {tab.label}
@@ -296,13 +315,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
           </div>
 
           {/* Search Input */}
-          <div style={{ position: 'relative', minWidth: '260px', flex: '1', maxWidth: '380px' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+          <div style={{ position: 'relative', minWidth: '240px', flex: '1', maxWidth: '340px' }}>
+            <Search size={14} style={{ position: 'absolute', left: '10px', top: '11px', color: 'var(--text-muted)' }} />
             <input
               type="text"
               className="input"
-              style={{ paddingLeft: '38px', paddingBottom: '8px', paddingTop: '8px', fontSize: '13px' }}
-              placeholder="Пошук за клієнтом, телефоном, кодом..."
+              style={{ paddingLeft: '32px', paddingBottom: '6px', paddingTop: '6px', fontSize: '13px' }}
+              placeholder="Пошук клієнта, телефону, коду..."
               value={searchTerm}
               onChange={e => { setSearchTerm(e.target.value); setPage(1); }}
             />
@@ -311,20 +330,25 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
       </div>
 
       {/* Submissions List Table */}
-      <div className="glass-panel" style={{ overflow: 'hidden' }}>
+      <div style={{
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-sm)',
+        overflow: 'hidden'
+      }}>
         {loading ? (
           <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <RefreshCw size={24} className="pulse-glow" style={{ margin: '0 auto 12px auto' }} />
-            <div>Завантаження списку брифів...</div>
+            <RefreshCw size={20} style={{ margin: '0 auto 10px auto' }} />
+            <div>Завантаження списку...</div>
           </div>
         ) : submissions.length === 0 ? (
           <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <FileText size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
-            <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
+            <Inbox size={28} style={{ margin: '0 auto 10px auto', opacity: 0.6 }} />
+            <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
               Записів не знайдено
             </div>
             <div style={{ fontSize: '13px' }}>
-              За вибраними критеріями фільтрації немає збережених брифів.
+              За поточними критеріями фільтрації немає записів.
             </div>
           </div>
         ) : (
@@ -332,39 +356,38 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
               <thead>
                 <tr style={{ background: 'var(--bg-surface-elevated)', borderBottom: '1px solid var(--border-subtle)' }}>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)' }}>Код брифу</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)' }}>Клієнт та Контакти</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)' }}>Магазин / Бюджет</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)' }}>Статус</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)' }}>Дата</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--text-secondary)', textAlign: 'right' }}>Дії</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>Код</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>Клієнт / Контакт</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>Магазин / Бюджет</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>Статус</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>Дата</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Дії</th>
                 </tr>
               </thead>
               <tbody>
                 {submissions.map(item => (
                   <tr 
                     key={item.id}
-                    style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.15s ease' }}
-                    className="hover-row"
+                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
                   >
                     {/* Ref Code */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                       <span style={{
                         fontFamily: 'var(--font-mono)',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: '12px',
-                        color: 'var(--accent-cyan-light)',
-                        background: 'rgba(2, 132, 199, 0.12)',
-                        padding: '4px 8px',
-                        borderRadius: '6px'
+                        color: 'var(--accent-primary)',
+                        background: 'var(--accent-primary-muted)',
+                        padding: '3px 6px',
+                        borderRadius: 'var(--radius-xs)'
                       }}>
                         {item.reference_code}
                       </span>
                     </td>
 
                     {/* Client & Phone */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
-                      <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                         {item.client_name}
                       </div>
                       <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -373,36 +396,28 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
                     </td>
 
                     {/* Store & Budget */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                       <div style={{ color: 'var(--text-primary)' }}>
-                        {item.store_name || 'Не вказано'}
+                        {item.store_name || '—'}
                       </div>
-                      <div style={{ fontSize: '12px', color: 'var(--accent-amber)' }}>
-                        {item.budget || 'Бюджет не вибрано'}
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        {item.budget || '—'}
                       </div>
                     </td>
 
                     {/* Status Changer */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle' }}>
                       <select
                         className="select"
                         value={item.status}
                         onChange={e => handleStatusChange(item.id, e.target.value as SubmissionStatus)}
                         style={{
-                          padding: '4px 8px',
+                          padding: '3px 8px',
                           fontSize: '12px',
-                          fontWeight: 600,
-                          borderRadius: '16px',
-                          background: item.status === 'new' ? 'rgba(56, 189, 248, 0.15)' :
-                                      item.status === 'in_review' ? 'rgba(245, 158, 11, 0.15)' :
-                                      item.status === 'approved' ? 'rgba(16, 185, 129, 0.15)' :
-                                      item.status === 'completed' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-                          color: item.status === 'new' ? '#38bdf8' :
-                                 item.status === 'in_review' ? '#fbbf24' :
-                                 item.status === 'approved' ? '#34d399' :
-                                 item.status === 'completed' ? '#c084fc' : '#fb7185',
-                          border: 'none',
-                          cursor: 'pointer'
+                          fontWeight: 500,
+                          borderRadius: 'var(--radius-xs)',
+                          width: 'auto',
+                          background: 'var(--bg-surface-elevated)'
                         }}
                       >
                         <option value="new">Новий</option>
@@ -414,37 +429,37 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
                     </td>
 
                     {/* Created Date */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle', fontSize: '12px', color: 'var(--text-muted)' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle', fontSize: '12px', color: 'var(--text-muted)' }}>
                       {item.created_at}
                     </td>
 
                     {/* Action Buttons */}
-                    <td style={{ padding: '14px 18px', verticalAlign: 'middle', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '8px' }}>
+                    <td style={{ padding: '12px 16px', verticalAlign: 'middle', textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', gap: '6px' }}>
                         <button
+                          type="button"
                           onClick={() => handleOpenView(item)}
                           className="btn btn-secondary btn-sm"
-                          style={{ fontSize: '12px', padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-                          title="Переглянути повну інформацію брифу"
+                          title="Переглянути бриф"
                         >
-                          <Eye size={13} style={{ color: 'var(--accent-cyan)' }} />
-                          <span>Переглянути</span>
+                          <Eye size={13} />
+                          <span>Перегляд</span>
                         </button>
 
                         <button
+                          type="button"
                           onClick={() => handleOpenEdit(item)}
                           className="btn btn-primary btn-sm"
-                          style={{ fontSize: '12px', padding: '6px 12px' }}
-                          title="Редагувати відповіді брифу"
+                          title="Редагувати"
                         >
                           <Edit3 size={13} />
                           <span>Редагувати</span>
                         </button>
 
                         <button
+                          type="button"
                           onClick={() => handleDelete(item.id, item.reference_code)}
                           className="btn btn-danger btn-sm"
-                          style={{ padding: '6px 10px' }}
                           title="Видалити"
                         >
                           <Trash2 size={13} />
@@ -461,29 +476,34 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
         {/* Pagination */}
         {totalPages > 1 && (
           <div style={{
-            padding: '14px 20px',
+            padding: '12px 18px',
             borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            background: 'var(--bg-surface)'
           }}>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               Сторінка {page} з {totalPages}
             </div>
+
             <div style={{ display: 'flex', gap: '6px' }}>
               <button
-                disabled={page <= 1}
+                type="button"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page <= 1}
                 className="btn btn-secondary btn-sm"
               >
-                Попередня
+                &larr; Попередня
               </button>
+
               <button
-                disabled={page >= totalPages}
+                type="button"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
                 className="btn btn-secondary btn-sm"
               >
-                Наступна
+                Наступна &rarr;
               </button>
             </div>
           </div>
@@ -504,19 +524,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
       {editingSubmission && (
         <AdminEditModal
           submission={editingSubmission}
-          onClose={() => {
-            setEditingSubmission(null);
-            fetchSubmissions();
-          }}
+          onClose={() => setEditingSubmission(null)}
           onUpdated={handleUpdatedSubmission}
         />
       )}
-
-      <style>{`
-        .hover-row:hover {
-          background: rgba(2, 132, 199, 0.05);
-        }
-      `}</style>
     </div>
   );
 };

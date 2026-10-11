@@ -25,7 +25,11 @@ export function App() {
   });
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('brief_theme') as 'dark' | 'light') || 'dark';
+    const saved = localStorage.getItem('brief_theme') as 'dark' | 'light' | null;
+    if (saved === 'dark' || saved === 'light') return saved;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   });
 
   const [answeredCount, setAnsweredCount] = useState<number>(0);
