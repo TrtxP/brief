@@ -194,6 +194,72 @@ a {
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
+/* Question Card & Form Components */
+.question-card {
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.question-header {
+  margin-bottom: 16px;
+}
+
+.question-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.question-badge {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-cyan);
+  background: rgba(2, 132, 199, 0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.question-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.question-required {
+  color: var(--accent-rose);
+  margin-left: 4px;
+}
+
+.question-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-left: 34px;
+  line-height: 1.5;
+}
+
+.question-body {
+  padding-left: 4px;
+}
+
+.question-error-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--accent-rose);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.choices-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* Layout Utilities */
 .container {
   max-width: 1200px;

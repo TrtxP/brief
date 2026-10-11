@@ -12,7 +12,7 @@ interface HeaderProps {
   onToggleTheme: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
+export const Header = React.memo<HeaderProps>(({
   answeredCount = 0,
   totalCount = 28,
   lastSavedTime,
@@ -193,4 +193,4 @@ export const Header: React.FC<HeaderProps> = ({
       `}</style>
     </header>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { BRIEF_SECTIONS, BRIEF_QUESTIONS } from '../data/briefQuestions';
 import { BriefAnswers, SubmissionResult } from '../types/brief';
 import { QuestionCard } from '../components/QuestionCard';
@@ -23,18 +23,25 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
   });
 
   const [activeSectionId, setActiveSectionId] = useState<string>(BRIEF_SECTIONS[0].id);
-  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
 
-  // Calculate answered questions count
-  const answeredCount = Object.keys(answers).filter(k => {
-    const v = answers[k];
-    if (Array.isArray(v)) return v.length > 0;
-    return typeof v === 'string' && v.trim().length > 0;
-  }).length;
+  // Calculate answered questions count via useMemo
+  const answeredCount = useMemo(() => {
+    return Object.keys(answers).filter(k => {
+      const v = answers[k];
+      if (Array.isArray(v)) return v.length > 0;
+      return typeof v === 'string' && v.trim().length > 0;
+    }).length;
+  }, [answers]);
+
+  // Store onSavedChange in ref to prevent effect re-runs when parent passes new function
+  const onSavedChangeRef = useRef(onSavedChange);
+  useEffect(() => {
+    onSavedChangeRef.current = onSavedChange;
+  });
 
   // Debounced auto-save to localStorage (500ms)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -48,9 +55,8 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
         const now = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-        setLastSavedTime(now);
-        if (onSavedChange) {
-          onSavedChange(answeredCount, now);
+        if (onSavedChangeRef.current) {
+          onSavedChangeRef.current(answeredCount, now);
         }
       } catch {
         // Ignore storage errors
@@ -62,10 +68,10 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
         clearTimeout(saveTimerRef.current);
       }
     };
-  }, [answers, answeredCount, onSavedChange]);
+  }, [answers, answeredCount]);
 
   // Section completion stats for sidebar
-  const sectionCompletion = React.useMemo(() => {
+  const sectionCompletion = useMemo(() => {
     const stats: Record<string, { answered: number; total: number }> = {};
     BRIEF_SECTIONS.forEach(sec => {
       let answeredInSec = 0;
@@ -80,21 +86,20 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     return stats;
   }, [answers]);
 
-  // Handle single question change
-  const handleAnswerChange = (questionId: string, val: string | string[]) => {
+  // Stable single question change handler with functional setState
+  const handleAnswerChange = useCallback((questionId: string, val: string | string[]) => {
     setAnswers(prev => ({
       ...prev,
       [questionId]: val
     }));
 
-    if (errors[questionId]) {
-      setErrors(prev => {
-        const copy = { ...prev };
-        delete copy[questionId];
-        return copy;
-      });
-    }
-  };
+    setErrors(prev => {
+      if (!prev[questionId]) return prev;
+      const copy = { ...prev };
+      delete copy[questionId];
+      return copy;
+    });
+  }, []);
 
   // Scroll to section
   const handleScrollToSection = (sectionId: string) => {
@@ -113,7 +118,9 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     if (window.confirm('Ви впевнені, що хочете очистити всі введені відповіді?')) {
       setAnswers({});
       localStorage.removeItem(STORAGE_KEY);
-      setLastSavedTime(null);
+      if (onSavedChangeRef.current) {
+        onSavedChangeRef.current(0, null);
+      }
     }
   };
 
@@ -323,7 +330,7 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
                     key={question.id}
                     question={question}
                     value={answers[question.id]}
-                    onChange={val => handleAnswerChange(question.id, val)}
+                    onChange={handleAnswerChange}
                     error={errors[question.id]}
                   />
                 ))}
@@ -393,6 +400,9 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
           onReset={() => {
             setSubmissionResult(null);
             setAnswers({});
+            if (onSavedChangeRef.current) {
+              onSavedChangeRef.current(0, null);
+            }
           }}
           onClose={() => setSubmissionResult(null)}
         />
