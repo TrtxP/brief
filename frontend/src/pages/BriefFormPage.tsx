@@ -4,7 +4,7 @@ import { BriefAnswers, SubmissionResult } from '../types/brief';
 import { QuestionCard } from '../components/QuestionCard';
 import { SuccessModal } from '../components/SuccessModal';
 import { api } from '../services/api';
-import { Send, Trash2, Sparkles, AlertCircle, Info, Fish } from 'lucide-react';
+import { Send, Trash2, AlertCircle, Info, Fish } from 'lucide-react';
 
 interface BriefFormPageProps {
   onSavedChange?: (answeredCount: number, lastSavedTime: string | null) => void;
@@ -103,7 +103,8 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
     if (element) {
       const yOffset = -90;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: y, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -160,7 +161,8 @@ export const BriefFormPage: React.FC<BriefFormPageProps> = ({ onSavedChange }) =
       const firstErrorId = Object.keys(newErrors)[0];
       const errElem = document.getElementById(`q-${firstErrorId}`);
       if (errElem) {
-        errElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        errElem.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
       }
       setSubmitError(`Заповніть усі обов'язкові поля брифу (${Object.keys(newErrors).length} незаповнених).`);
       return;

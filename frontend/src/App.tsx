@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { BriefFormPage } from './pages/BriefFormPage';
 import { AdminLoginPage } from './pages/AdminLoginPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { BRIEF_QUESTIONS } from './data/briefQuestions';
 import { api } from './services/api';
 
 type RouteType = 'brief' | 'admin' | 'admin-login';
@@ -81,7 +82,7 @@ export function App() {
       {/* Top Navigation */}
       <Header
         answeredCount={answeredCount}
-        totalCount={34}
+        totalCount={BRIEF_QUESTIONS.length}
         lastSavedTime={lastSavedTime}
         currentRoute={currentRoute}
         onRouteChange={handleRouteChange}

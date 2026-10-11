@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SubmissionItem, AdminStats, SubmissionStatus } from '../types/admin';
 import { AdminEditModal } from './AdminEditModal';
+import { AdminViewModal } from './AdminViewModal';
 import { api } from '../services/api';
 import { 
   Users, 
@@ -12,6 +13,7 @@ import {
   LogOut, 
   Trash2, 
   Edit3, 
+  Eye,
   RefreshCw, 
   AlertCircle,
   Filter,
@@ -36,6 +38,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
 
   // Active editing submission modal
   const [editingSubmission, setEditingSubmission] = useState<SubmissionItem | null>(null);
+  // Active viewing submission modal
+  const [viewingSubmission, setViewingSubmission] = useState<SubmissionItem | null>(null);
 
   const fetchSubmissions = useCallback(async () => {
     setLoading(true);
@@ -79,6 +83,33 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
     if (window.confirm(`Ви впевнені, що хочете видалити бриф ${refCode}?`)) {
       try {
         await api.adminDeleteSubmission(id);
+        fetchSubmissions();
+      } catch (err: any) {
+        alert('Помилка видалення: ' + err.message);
+      }
+    }
+  };
+
+  // Open view modal for full brief inspection
+  const handleOpenView = async (item: SubmissionItem) => {
+    try {
+      const full = await api.adminGetSubmission(item.id);
+      setViewingSubmission(full.data);
+    } catch {
+      setViewingSubmission(item);
+    }
+  };
+
+  const handleEditFromView = (item: SubmissionItem) => {
+    setViewingSubmission(null);
+    handleOpenEdit(item);
+  };
+
+  const handleDeleteFromView = async (id: number, refCode: string) => {
+    if (window.confirm(`Ви впевнені, що хочете видалити бриф ${refCode}?`)) {
+      try {
+        await api.adminDeleteSubmission(id);
+        setViewingSubmission(null);
         fetchSubmissions();
       } catch (err: any) {
         alert('Помилка видалення: ' + err.message);
@@ -133,7 +164,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           {/* Export Dropdown / Buttons */}
           <a
             href={api.getExportUrl('csv')}
@@ -391,6 +422,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
                     <td style={{ padding: '14px 18px', verticalAlign: 'middle', textAlign: 'right' }}>
                       <div style={{ display: 'inline-flex', gap: '8px' }}>
                         <button
+                          onClick={() => handleOpenView(item)}
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '12px', padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                          title="Переглянути повну інформацію брифу"
+                        >
+                          <Eye size={13} style={{ color: 'var(--accent-cyan)' }} />
+                          <span>Переглянути</span>
+                        </button>
+
+                        <button
                           onClick={() => handleOpenEdit(item)}
                           className="btn btn-primary btn-sm"
                           style={{ fontSize: '12px', padding: '6px 12px' }}
@@ -448,6 +489,16 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout
           </div>
         )}
       </div>
+
+      {/* Dedicated View Modal */}
+      {viewingSubmission && (
+        <AdminViewModal
+          submission={viewingSubmission}
+          onClose={() => setViewingSubmission(null)}
+          onEdit={handleEditFromView}
+          onDelete={handleDeleteFromView}
+        />
+      )}
 
       {/* Dedicated Edit Modal */}
       {editingSubmission && (

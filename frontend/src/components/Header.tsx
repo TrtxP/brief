@@ -14,7 +14,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   answeredCount = 0,
-  totalCount = 34,
+  totalCount = 28,
   lastSavedTime,
   isAdmin = false,
   currentRoute,
@@ -33,12 +33,10 @@ export const Header: React.FC<HeaderProps> = ({
         position: "sticky",
         top: 0,
         zIndex: 40,
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
         background:
           theme === "dark"
-            ? "rgba(11, 17, 32, 0.85)"
-            : "rgba(255, 255, 255, 0.85)",
+            ? "var(--bg-main)"
+            : "#ffffff",
         borderBottom: "1px solid var(--border-subtle)",
         transition: "background-color 0.2s ease, border-color 0.2s ease",
       }}

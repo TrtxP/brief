@@ -10,8 +10,8 @@
   --bg-main: #0b1120;
   --bg-surface: #111e38;
   --bg-surface-elevated: #1e293b;
-  --bg-card: rgba(23, 37, 84, 0.45);
-  --bg-card-hover: rgba(30, 58, 138, 0.35);
+  --bg-card: #131f38;
+  --bg-card-hover: #1e293b;
   
   --border-subtle: rgba(148, 163, 184, 0.12);
   --border-active: rgba(56, 189, 248, 0.4);
@@ -69,8 +69,8 @@
   --bg-main: #f0f4f8;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-card-hover: rgba(240, 249, 255, 0.9);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
   
   --border-subtle: rgba(203, 213, 225, 0.8);
   --border-active: rgba(2, 132, 199, 0.5);
@@ -118,7 +118,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-family: var(--font-main);
   background-color: var(--bg-main);
   color: var(--text-primary);
@@ -130,19 +129,10 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-color: var(--bg-main);
-  transition: background-color 0.25s ease;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
   background-image: 
     radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.05) 0px, transparent 50%);
-  will-change: transform;
-  pointer-events: none;
+  transition: background-color 0.25s ease;
 }
 
 /* Custom Scrollbar */
@@ -157,8 +147,10 @@ body::before {
   background: var(--bg-surface-elevated);
   border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-cyan);
+@media (hover: hover) and (pointer: fine) {
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-cyan);
+  }
 }
 
 /* Typography & Links */
@@ -173,23 +165,25 @@ a {
   text-decoration: none;
   transition: color 0.2s ease;
 }
-a:hover {
-  color: var(--accent-cyan-light);
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--accent-cyan-light);
+  }
 }
 
-/* Glassmorphism Containers */
+/* Containers (Opaque backgrounds, no expensive backdrop-filter) */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.25s ease;
+  transition: border-color 0.2s ease, background-color 0.25s ease;
 }
 
-.glass-panel:hover {
-  border-color: var(--border-active);
+@media (hover: hover) and (pointer: fine) {
+  .glass-panel:hover {
+    border-color: var(--border-active);
+  }
 }
 
 .glass-panel-elevated {
@@ -197,7 +191,7 @@ a:hover {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 /* Layout Utilities */
@@ -231,7 +225,7 @@ a:hover {
   font-weight: 600;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   outline: none;
   text-decoration: none;
@@ -243,24 +237,11 @@ a:hover {
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
 }
-.btn-primary:hover {
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
-  transform: translateY(-1px);
-}
-.btn-primary:active {
-  transform: translateY(0);
-}
 
 .btn-secondary {
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
-}
-.btn-secondary:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-active);
-  color: var(--text-accent);
 }
 
 .btn-success {
@@ -268,19 +249,29 @@ a:hover {
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
-.btn-success:hover {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  transform: translateY(-1px);
-}
 
 .btn-danger {
   background: rgba(244, 63, 94, 0.15);
   color: #f43f5e;
   border: 1px solid rgba(244, 63, 94, 0.3);
 }
-.btn-danger:hover {
-  background: #f43f5e;
-  color: #ffffff;
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+    color: var(--text-accent);
+  }
+  .btn-success:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  }
+  .btn-danger:hover {
+    background: #f43f5e;
+    color: #ffffff;
+  }
 }
 
 .btn-sm {
@@ -305,7 +296,7 @@ a:hover {
   color: var(--input-text);
   font-family: var(--font-main);
   font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
   outline: none;
 }
 
@@ -340,14 +331,15 @@ a:hover {
   border: 1px solid var(--choice-border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 
-.choice-card:hover {
-  background: var(--choice-hover-bg);
-  border-color: var(--choice-border-hover);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .choice-card:hover {
+    background: var(--choice-hover-bg);
+    border-color: var(--choice-border-hover);
+  }
 }
 
 .choice-card.selected {
@@ -366,7 +358,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .choice-indicator.radio {
@@ -404,7 +396,7 @@ a:hover {
   padding: 32px 28px;
   text-align: center;
   box-shadow: var(--shadow-lg);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .action-card-title {
@@ -515,22 +507,4 @@ a:hover {
 
 .pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
-}
-
-/* ==========================================================
-   Mobile / Touch Performance Overrides
-   Removes expensive backdrop-filter and fixed gradient
-   on devices without hover (phones, tablets) to ensure
-   smooth 60fps scrolling. Desktop stays unchanged.
-   ========================================================== */
-@media (hover: none) {
-  body::before {
-    display: none;
-  }
-
-  .glass-panel {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--bg-surface);
-  }
 }
