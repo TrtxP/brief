@@ -13,6 +13,24 @@ frontend/.vite/
 frontend/dist/
 .cache/
 .parcel-cache/
+*.tsbuildinfo
+
+# Compiled frontend output (served by PHP from view/)
+view/*
+
+# Local PHP configuration and runtime
+php.ini
+*.ini
+*.user.ini
+
+# Environment and sensitive secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
 
 # Logs
 *.log
@@ -23,19 +41,30 @@ pnpm-debug.log*
 lerna-debug.log*
 tests/*.log
 
-# Local databases and runtime data
+# Local databases, dumps and runtime data
 database/*.sqlite
 database/*.sqlite-journal
 database/*.db
 *.sqlite
 *.sqlite3
+*.db
+*.sql
+*.sql.gz
+brief_db.sql
 
-# Environment and sensitive secrets
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Temporary files and test profiles
+tmp/
+temp/
+*.tmp
+temp_*/
+tmp_*/
+puppeteer_*/
+scratch/
+.system_generated/
+coverage/
+.nyc_output/
+.phpunit.cache/
+.phpunit.result.cache
 
 # IDE and Code Editors
 .idea/
@@ -44,6 +73,7 @@ database/*.db
 *.sublime-project
 *.swp
 *.swo
+*~
 .project
 .settings/
 
@@ -56,12 +86,3 @@ database/*.db
 ehthumbs.db
 Thumbs.db
 Desktop.ini
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-view/*
-
-brief_db.sql
