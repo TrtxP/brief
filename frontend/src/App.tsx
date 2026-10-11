@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { Header } from './components/Header';
 import { BriefFormPage } from './pages/BriefFormPage';
-import { AdminLoginPage } from './pages/AdminLoginPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { BRIEF_QUESTIONS } from './data/briefQuestions';
 import { api } from './services/api';
+
+// Lazy load admin pages to keep the public bundle lean
+const AdminLoginPage = React.lazy(() =>
+  import('./pages/AdminLoginPage').then(m => ({ default: m.AdminLoginPage }))
+);
+const AdminDashboardPage = React.lazy(() =>
+  import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage }))
+);
 
 type RouteType = 'brief' | 'admin' | 'admin-login';
 
@@ -18,7 +25,11 @@ export function App() {
   });
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('brief_theme') as 'dark' | 'light') || 'dark';
+    const saved = localStorage.getItem('brief_theme') as 'dark' | 'light' | null;
+    if (saved === 'dark' || saved === 'light') return saved;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   });
 
   const [answeredCount, setAnsweredCount] = useState<number>(0);
@@ -45,11 +56,11 @@ export function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleToggleTheme = () => {
+  const handleToggleTheme = useCallback(() => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  }, []);
 
-  const handleRouteChange = (route: RouteType) => {
+  const handleRouteChange = useCallback((route: RouteType) => {
     if (route === 'admin') {
       if (api.hasToken()) {
         setCurrentRoute('admin');
@@ -64,24 +75,29 @@ export function App() {
     } else {
       setCurrentRoute(route);
     }
-  };
+  }, []);
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = useCallback(() => {
     setCurrentRoute('admin');
     window.location.hash = 'admin';
-  };
+  }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await api.adminLogout();
     setCurrentRoute('admin-login');
-  };
+  }, []);
+
+  const handleSavedChange = useCallback((count: number, time: string | null) => {
+    setAnsweredCount(count);
+    setLastSavedTime(time);
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navigation */}
       <Header
         answeredCount={answeredCount}
-        totalCount={34}
+        totalCount={BRIEF_QUESTIONS.length}
         lastSavedTime={lastSavedTime}
         currentRoute={currentRoute}
         onRouteChange={handleRouteChange}
@@ -92,26 +108,27 @@ export function App() {
       {/* Main Content Area */}
       <main style={{ flex: 1 }}>
         {currentRoute === 'brief' && (
-          <BriefFormPage
-            onSavedChange={(count, time) => {
-              setAnsweredCount(count);
-              setLastSavedTime(time);
-            }}
-          />
+          <BriefFormPage onSavedChange={handleSavedChange} />
         )}
 
-        {currentRoute === 'admin-login' && (
-          <AdminLoginPage
-            onLoginSuccess={handleLoginSuccess}
-            onBackToBrief={() => handleRouteChange('brief')}
-          />
-        )}
+        <Suspense fallback={
+          <div className="container" style={{ padding: '60px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
+            Завантаження панелі...
+          </div>
+        }>
+          {currentRoute === 'admin-login' && (
+            <AdminLoginPage
+              onLoginSuccess={handleLoginSuccess}
+              onBackToBrief={() => handleRouteChange('brief')}
+            />
+          )}
 
-        {currentRoute === 'admin' && (
-          <AdminDashboardPage
-            onLogout={handleLogout}
-          />
-        )}
+          {currentRoute === 'admin' && (
+            <AdminDashboardPage
+              onLogout={handleLogout}
+            />
+          )}
+        </Suspense>
       </main>
 
       {/* Footer */}
@@ -131,3 +148,4 @@ export function App() {
   );
 }
 export default App;
+

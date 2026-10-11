@@ -37,7 +37,7 @@ class AdminUser extends Model
     public static function recordLogin(int $userId): void
     {
         $db = self::db();
-        $stmt = $db->prepare("UPDATE `admin_users` SET `last_login` = NOW() WHERE `id` = ?");
+        $stmt = $db->prepare("UPDATE `admin_users` SET `last_login` = CURRENT_TIMESTAMP WHERE `id` = ?");
         $stmt->execute([$userId]);
     }
 

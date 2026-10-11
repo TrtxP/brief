@@ -84,30 +84,21 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 100,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(8px)',
-      padding: '20px',
-      overscrollBehavior: 'contain'
-    }}>
-      <div className="glass-panel-elevated animate-fade-in" style={{
-        maxWidth: '1000px',
-        width: '100%',
-        maxHeight: '92vh',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-card" 
+        style={{
+          maxWidth: '1000px',
+          maxHeight: '92vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
+        onClick={e => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div style={{
-          padding: '20px 24px',
+          padding: '18px 24px',
           borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
@@ -119,8 +110,8 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
               <span className="badge badge-new" style={{ fontFamily: 'var(--font-mono)' }}>
                 {submission.reference_code}
               </span>
-              <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
-                Редагування відповідей брифу: {clientName || 'Клієнт'}
+              <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Редагування відповідей: {clientName || 'Клієнт'}
               </h2>
             </div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -130,35 +121,31 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
 
           <div>
             <button
+              type="button"
               onClick={onClose}
               className="btn btn-secondary btn-sm"
-              style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%' }}
+              style={{ width: '30px', height: '30px', padding: 0 }}
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           </div>
         </div>
 
         {/* Status Messages */}
         {error && (
-          <div style={{
-            background: 'rgba(244, 63, 94, 0.15)',
-            color: '#fb7185',
-            padding: '10px 24px',
-            fontSize: '13px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+          <div className="action-error-banner" style={{ margin: '14px 24px 0 24px' }}>
             <AlertCircle size={15} />
             <span>{error}</span>
           </div>
         )}
         {successMsg && (
           <div style={{
-            background: 'rgba(16, 185, 129, 0.15)',
-            color: '#34d399',
-            padding: '10px 24px',
+            background: 'var(--accent-primary-muted)',
+            border: '1px solid var(--accent-primary)',
+            color: 'var(--accent-primary)',
+            padding: '10px 16px',
+            margin: '14px 24px 0 24px',
+            borderRadius: 'var(--radius-sm)',
             fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
@@ -177,8 +164,7 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '24px',
-          overscrollBehavior: 'contain',
-          WebkitOverflowScrolling: 'touch'
+          overscrollBehavior: 'contain'
         }}>
           {/* Top Row: General Settings & Manager Notes */}
           <div style={{
@@ -187,13 +173,13 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
             gap: '16px',
             background: 'var(--bg-surface-elevated)',
             padding: '18px',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)'
           }}>
             {/* Status Selector */}
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                <Tag size={13} style={{ color: 'var(--accent-cyan)' }} />
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Tag size={13} style={{ color: 'var(--accent-primary)' }} />
                 <span>Статус обробки</span>
               </label>
               <select
@@ -212,51 +198,113 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
 
             {/* Client Name */}
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                <User size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Контактна особа</span>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <User size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Ім'я клієнта / Компанія (#1)</span>
               </label>
               <input
                 type="text"
                 className="input"
                 value={clientName}
-                onChange={e => {
-                  setClientName(e.target.value);
-                  handleAnswerChange('1', e.target.value);
-                }}
+                onChange={e => setClientName(e.target.value)}
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                <Phone size={13} style={{ color: 'var(--accent-cyan)' }} />
-                <span>Телефон</span>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Phone size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Телефон (#2)</span>
               </label>
               <input
                 type="text"
                 className="input"
                 value={phone}
-                onChange={e => {
-                  setPhone(e.target.value);
-                  handleAnswerChange('2', e.target.value);
-                }}
+                onChange={e => setPhone(e.target.value)}
+              />
+            </div>
+
+            {/* Contact Method */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <MessageSquare size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Спосіб зв'язку (#3)</span>
+              </label>
+              <input
+                type="text"
+                className="input"
+                value={contactMethod}
+                onChange={e => setContactMethod(e.target.value)}
+              />
+            </div>
+
+            {/* Preferred Time */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Clock size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Зручний час дзвінка (#4)</span>
+              </label>
+              <input
+                type="text"
+                className="input"
+                value={preferredTime}
+                onChange={e => setPreferredTime(e.target.value)}
+              />
+            </div>
+
+            {/* Store Name */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Store size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Назва магазину (#6)</span>
+              </label>
+              <input
+                type="text"
+                className="input"
+                value={storeName}
+                onChange={e => setStoreName(e.target.value)}
+              />
+            </div>
+
+            {/* Budget */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <DollarSign size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Орієнтовний бюджет (#29)</span>
+              </label>
+              <input
+                type="text"
+                className="input"
+                value={budget}
+                onChange={e => setBudget(e.target.value)}
+              />
+            </div>
+
+            {/* Timeline */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Clock size={13} style={{ color: 'var(--accent-primary)' }} />
+                <span>Дедлайн / Терміни (#28)</span>
+              </label>
+              <input
+                type="text"
+                className="input"
+                value={timeline}
+                onChange={e => setTimeline(e.target.value)}
               />
             </div>
 
             {/* Manager Notes */}
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                <MessageSquare size={13} style={{ color: 'var(--accent-amber)' }} />
-                <span>Внутрішні нотатки менеджера (примітки для команди)</span>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+                Внутрішні нотатки менеджера
               </label>
               <textarea
                 className="textarea"
+                rows={2}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                placeholder="Введіть нотатки, домовленості, дату дзвінка або коментарі..."
-                rows={2}
-                style={{ minHeight: '60px' }}
+                placeholder="Зафіксуйте коментарі, деталі дзвінка або особливості проекту..."
               />
             </div>
           </div>
@@ -270,31 +318,29 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
               borderBottom: '1px solid var(--border-subtle)',
               paddingBottom: '8px'
             }}>
-              {BRIEF_SECTIONS.map((sec, idx) => (
-                <button
-                  key={sec.id}
-                  onClick={() => setActiveTab(sec.id)}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: 'var(--radius-sm)',
-                    background: activeTab === sec.id ? 'var(--accent-cyan)' : 'var(--bg-surface-elevated)',
-                    color: activeTab === sec.id ? '#ffffff' : 'var(--text-secondary)',
-                    border: 'none',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    transition: 'background 0.2s ease, color 0.2s ease'
-                  }}
-                >
-                  {idx + 1}. {sec.title}
-                </button>
-              ))}
+              {BRIEF_SECTIONS.map((sec, idx) => {
+                const isSelected = activeTab === sec.id;
+                return (
+                  <button
+                    type="button"
+                    key={sec.id}
+                    onClick={() => setActiveTab(sec.id)}
+                    className="btn btn-sm"
+                    style={{
+                      background: isSelected ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                      color: isSelected ? 'var(--accent-primary-text)' : 'var(--text-secondary)',
+                      borderColor: isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)'
+                    }}
+                  >
+                    {idx + 1}. {sec.title}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Questions for Active Section */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {BRIEF_QUESTIONS.filter(q => {
               const sec = BRIEF_SECTIONS.find(s => s.id === activeTab);
               return sec ? sec.questionIds.includes(q.id) : false;
@@ -308,8 +354,8 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                   key={q.id}
                   style={{
                     padding: '16px',
-                    background: 'var(--bg-surface-elevated)',
-                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface)',
+                    borderRadius: 'var(--radius-sm)',
                     border: '1px solid var(--border-subtle)'
                   }}
                 >
@@ -317,12 +363,12 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                     <span style={{
                       fontSize: '11px',
                       fontFamily: 'var(--font-mono)',
-                      color: 'var(--accent-cyan)',
-                      fontWeight: 700
+                      color: 'var(--text-muted)',
+                      fontWeight: 600
                     }}>
                       #{q.index}
                     </span>
-                    <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    <label style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {q.title}
                     </label>
                   </div>
@@ -370,12 +416,13 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                             gap: '8px',
                             fontSize: '13px',
                             cursor: 'pointer',
-                            color: strVal === opt ? 'var(--accent-cyan-light)' : 'var(--text-primary)'
+                            color: strVal === opt ? 'var(--accent-primary)' : 'var(--text-primary)'
                           }}
                         >
                           <input
                             type="radio"
                             name={`radio-${q.id}`}
+                            className="option-native-control"
                             checked={strVal === opt}
                             onChange={() => handleAnswerChange(q.id, opt)}
                           />
@@ -386,10 +433,10 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                       <input
                         type="text"
                         className="input"
-                        placeholder="Або вкажіть інший кастомний варіант..."
+                        placeholder="Або вкажіть інший варіант..."
                         value={strVal.startsWith('Інше: ') ? strVal.replace('Інше: ', '') : (!q.options?.includes(strVal) ? strVal : '')}
                         onChange={e => handleAnswerChange(q.id, e.target.value ? `Інше: ${e.target.value}` : '')}
-                        style={{ marginTop: '4px', fontSize: '13px', padding: '8px 12px' }}
+                        style={{ marginTop: '4px', fontSize: '13px' }}
                       />
                     </div>
                   )}
@@ -407,11 +454,12 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                               gap: '8px',
                               fontSize: '13px',
                               cursor: 'pointer',
-                              color: checked ? 'var(--accent-cyan-light)' : 'var(--text-primary)'
+                              color: checked ? 'var(--accent-primary)' : 'var(--text-primary)'
                             }}
                           >
                             <input
                               type="checkbox"
+                              className="option-native-control"
                               checked={checked}
                               onChange={() => {
                                 if (checked) {
@@ -439,7 +487,7 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
                             handleAnswerChange(q.id, cleaned);
                           }
                         }}
-                        style={{ marginTop: '4px', fontSize: '13px', padding: '8px 12px' }}
+                        style={{ marginTop: '4px', fontSize: '13px' }}
                       />
                     </div>
                   )}
@@ -459,13 +507,14 @@ export const AdminEditModal: React.FC<AdminEditModalProps> = ({
           background: 'var(--bg-surface)'
         }}>
           <button
+            type="button"
             onClick={handleSave}
             disabled={isSaving}
             className="btn btn-primary"
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            <Save size={16} />
-            <span>{isSaving ? 'Збереження в БД...' : 'Зберегти всі зміни брифу'}</span>
+            <Save size={15} />
+            <span>{isSaving ? 'Збереження...' : 'Зберегти всі зміни'}</span>
           </button>
         </div>
       </div>

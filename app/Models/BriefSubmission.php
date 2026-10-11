@@ -43,7 +43,7 @@ class BriefSubmission extends Model
         $stmt = $db->prepare("
             INSERT INTO `brief_submissions` 
             (`reference_code`, `client_name`, `phone`, `contact_method`, `preferred_time`, `store_name`, `budget`, `timeline`, `status`, `answers_json`, `notes`, `ip_address`, `user_agent`, `created_at`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, NULL, ?, ?, NOW())
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, NULL, ?, ?, CURRENT_TIMESTAMP)
         ");
 
         $stmt->execute([
@@ -223,7 +223,7 @@ class BriefSubmission extends Model
             return false;
         }
 
-        $fields[] = "`updated_at` = NOW()";
+        $fields[] = "`updated_at` = CURRENT_TIMESTAMP";
         $params[] = $id;
 
         $sql = "UPDATE `brief_submissions` SET " . implode(', ', $fields) . " WHERE `id` = ?";
